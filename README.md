@@ -80,3 +80,89 @@ python manage.py runserver
 
 6. **Accede a la aplicación:**
 El servidor se iniciará en `http://127.0.0.1:8000`. Abre esta URL en tu navegador web y deberías ver la página de bienvenida de Django, confirmando que la instalación fue exitosa.
+
+## Configuración de la Base de Datos
+
+Este proyecto utiliza MySQL como motor de base de datos. Los siguientes pasos te guiarán para configurar tu base de datos local importando un backup existente.
+
+### Prerrequisitos
+
+Asegúrate de tener instalado el software de MySQL necesario.
+
+1. **MySQL Community Server:**
+    * **Versión Requerida:** 8.4.x LTS
+    * **Descarga:** [MySQL Community Server 8.4 LTS](https://dev.mysql.com/downloads/mysql/)
+    * Durante la instalación, se te pedirá que establezcas una contraseña para el usuario **`root`**. **Guarda esta contraseña**, es muy importante.
+2. **MySQL Workbench:**
+    * **Versión Requerida:** 8.0.x o superior
+    * **Descarga:** [MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+
+### Paso 1: Importar la Base de Datos desde el Backup
+
+En lugar de crear la base de datos manualmente, la restauraremos desde un archivo de backup (`.sql`) usando MySQL Workbench.
+
+1. Abre **MySQL Workbench** y conéctate a tu servidor de base de datos local usando el usuario `root` y la contraseña que estableciste durante la instalación.
+2. Navega al menú superior y selecciona **`Server`** -> **`Data Import`**.
+3. En la pantalla de "Import from Disk", selecciona la opción **`Import from Self-Contained File`**.
+4. Busca y selecciona el archivo de backup **`projectanf_backup.sql`** (debe estar ubicado en la raíz del proyecto o en una carpeta designada).
+5. En la sección **`Default Target Schema`**, deja que el script cree la base de datos automáticamente. Si el backup no contiene la instrucción `CREATE DATABASE`, selecciona "New" y crea un schema llamado `projectanf`.
+6. Haz clic en el botón **`Start Import`** en la esquina inferior derecha para comenzar el proceso de restauración.
+
+### Paso 2: Configurar las Variables de Entorno (Conexión Root)
+
+Para simplificar la configuración de desarrollo local, nos conectaremos directamente con el usuario `root`.
+
+1. **Crea un archivo `.env`** en la raíz de tu proyecto (a la misma altura que `manage.py`).
+2. **Añade las credenciales** de tu usuario `root` al archivo `.env`. Reemplaza `tu_contraseña_de_root` con la contraseña real.
+
+```ini
+# Archivo: .env
+# Variables de entorno para la configuración de la base de datos (desarrollo)
+
+DB_NAME=projectanf
+DB_USER=root
+DB_PASSWORD=tu_contraseña_de_root
+DB_HOST=127.0.0.1
+DB_PORT=3306
+```
+
+
+### Paso 3: Conectar Django a la Base de Datos
+
+1. **Actualiza la configuración de `DATABASES`** para usar estas variables:
+
+```python
+# En core/settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
+}
+```
+
+### Paso 4: Verificar Sincronización y Crear Administrador
+
+1. **Verifica el estado de las migraciones:**
+Como la base de datos fue importada, es probable que las tablas ya existan. Ejecuta `migrate` para asegurar que Django esté sincronizado.
+
+```bash
+python manage.py migrate
+```
+
+Si ves el mensaje "No migrations to apply", significa que todo está correcto.
+2. **Crea un superusuario** para acceder al panel de administración de Django:
+
+```bash
+python manage.py createsuperuser
+```
+
+Sigue las instrucciones en pantalla para crear tu cuenta de administrador personal.
