@@ -4,8 +4,7 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Base de datos local
-*.sqlite3
+#Bases de datos y variables de entorno
 .env
 
 # Configuración del editor
