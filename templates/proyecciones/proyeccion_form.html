@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h4>Proyección de Ventas</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Empresa</label>
+          <select name="empresa" class="form-select" required>
+            <option value="">Seleccione una empresa</option>
+            {% for e in empresas %}
+              <option value="{{ e.id }}">{{ e.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Método de proyección</label>
+          <select name="metodo" class="form-select" required>
+            <option value="">Seleccione un método</option>
+            <option>Incremento Absoluto</option>
+            <option>Incremento Porcentual</option>
+            <option>Minimos Cuadrados</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Archivo Excel</label>
+          <input type="file" name="archivo" class="form-control" accept=".xlsx,.xls" required>
+          <small class="text-muted">Debe contener las columnas: <b>Año</b>, <b>Mes</b> y <b>Valor</b>.</small>
+        </div>
+
+        <button type="submit" class="btn btn-success">Procesar proyección</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

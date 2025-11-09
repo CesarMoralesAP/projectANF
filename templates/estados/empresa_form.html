@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">{{ accion }} Empresa</h4>
+        </div>
+
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la Empresa</label>
+                    {{ form.nombre }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sector</label>
+                    {{ form.sector }}
+                </div>
+
+                <!--<div class="mb-3">
+                    <label class="form-label">Catálogo de Cuentas (Excel)</label>
+                    {{ form.catalogo_excel }}
+                    <input type="file" name="catalogo" class="form-control">
+                    <small class="text-muted d-block">Opcional: puede subir un archivo Excel con las cuentas de esta empresa.</small>
+                </div>-->
+                {% if not catalogo_existente %}
+                    <div class="mb-3">
+                        <label for="catalogo" class="form-label">Catálogo de Cuentas (Excel)</label>
+                        {{ form.catalogo_excel }}
+                        <small class="text-muted d-block">Opcional: puede subir un archivo Excel con las cuentas de esta empresa.</small>
+                    </div>
+                {% else %}
+                    {% if editando %}
+                    <div class="alert alert-info">
+                        Ya existe un catálogo asociado a esta empresa. No es posible subir uno nuevo.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <div class="text-end">
+                    <a href="{% url 'listar_empresas' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
