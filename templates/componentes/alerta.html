@@ -1,0 +1,15 @@
+{% if mensaje %}
+<div class="alert alert-{{ tipo|default:'info' }}">
+    <div class="alert-icon">
+        {% if tipo == 'success' %}
+            ✓
+        {% elif tipo == 'error' %}
+            ✕
+        {% else %}
+            ℹ
+        {% endif %}
+    </div>
+    <span class="alert-message">{{ mensaje }}</span>
+</div>
+{% endif %}
+

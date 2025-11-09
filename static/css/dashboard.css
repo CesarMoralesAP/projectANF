@@ -1,0 +1,215 @@
+@import 'variables.css';
+@import 'components.css';
+
+/* ========================================
+   LAYOUT DEL DASHBOARD
+   ======================================== */
+
+/* Aplicar fuente al body del dashboard */
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
+}
+
+/* Container principal */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+/* Header */
+.dashboard-header {
+    background-color: var(--color-surface);
+    padding: var(--spacing-md) var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.header-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-title h1 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 2px 0;
+    line-height: 1.2;
+    font-family: var(--font-family);
+}
+
+.header-title p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.2;
+    font-family: var(--font-family);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-logout:hover {
+    background-color: var(--color-border);
+}
+
+.btn-logout-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Layout principal */
+.dashboard-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.dashboard-sidebar {
+    width: 280px;
+    background-color: var(--color-surface);
+    padding: var(--spacing-lg);
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+    height: calc(100vh - 73px);
+    overflow-y: auto;
+    position: sticky;
+    top: 73px;
+    border-right: 1px solid var(--color-border);
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu-item {
+    margin-bottom: var(--spacing-xs);
+}
+
+.sidebar-menu-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    font-family: var(--font-family);
+    transition: all 0.2s ease;
+}
+
+.sidebar-menu-link:hover {
+    background-color: var(--color-background);
+}
+
+.sidebar-menu-link.active {
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.sidebar-menu-link.active .sidebar-menu-icon {
+    color: var(--color-primary);
+}
+
+/* Contenido principal */
+.dashboard-content {
+    flex: 1;
+    padding: var(--spacing-xl);
+    overflow-y: auto;
+    height: calc(100vh - 73px);
+    background-color: var(--color-background);
+}
+
+/* Aplicar estilos de componentes a elementos específicos del dashboard */
+.empresas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.empresa-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: all 0.2s ease;
+}
+
+.empresa-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-main {
+        flex-direction: column;
+    }
+    
+    .dashboard-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+    
+    .dashboard-content {
+        padding: var(--spacing-md);
+        height: auto;
+    }
+    
+    .empresas-grid {
+        grid-template-columns: 1fr;
+    }
+}

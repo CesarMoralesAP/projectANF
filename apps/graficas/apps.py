@@ -1,7 +1,8 @@
 from django.apps import AppConfig
 
 
-class UsuariosConfig(AppConfig):
+class GraficasConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.usuarios'
-    verbose_name = 'Usuarios'
+    name = 'apps.graficas'
+    verbose_name = 'Gráficas'
+

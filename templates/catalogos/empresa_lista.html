@@ -1,0 +1,178 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Empresas - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Gestión de Empresas</h2>
+        <p>Administre las empresas del sistema</p>
+    </div>
+    {% if not mostrar_formulario %}
+    <a href="?nueva=1" class="btn btn-primary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Nueva Empresa</span>
+    </a>
+    {% endif %}
+</div>
+
+{% if mostrar_formulario and form %}
+<!-- Card del formulario -->
+<div class="form-card card">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Nueva Empresa</h3>
+        <p class="form-card-subtitle">Complete los datos de la empresa</p>
+    </div>
+    <div class="form-card-content">
+        <form method="post" class="empresa-form">
+            {% csrf_token %}
+            
+            <div class="form-grid">
+                <!-- Campo Nombre -->
+                <div class="form-group">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                        {{ form.nombre.label }}
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.nombre.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Campo Sector -->
+                <div class="form-group">
+                    <label for="{{ form.sector.id_for_label }}" class="form-label">
+                        {{ form.sector.label }}
+                    </label>
+                    {{ form.sector }}
+                    {% if form.sector.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.sector.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Errores generales del formulario -->
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!-- Botones de acción -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Crear Empresa</button>
+                <a href="{% url 'catalogos:empresa_lista' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<div class="empresas-grid">
+    {% for empresa in empresas %}
+    <div class="empresa-card card">
+        <div class="card-icon empresa-card-icon">
+            <div class="card-icon-inner"></div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">{{ empresa.nombre }}</h3>
+            <p class="card-subtitle">Sector: {{ empresa.sector.nombre }}</p>
+            <p class="card-meta">Creada: {{ empresa.creado_en|date:"d/m/Y" }}</p>
+        </div>
+        <div class="card-actions">
+            <button class="btn btn-danger btn-eliminar-empresa" type="button" 
+                    data-empresa-id="{{ empresa.pk }}" 
+                    data-empresa-nombre="{{ empresa.nombre }}"
+                    title="Eliminar empresa">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    {% empty %}
+    <div class="info-note" style="grid-column: 1 / -1;">
+        <p>No hay empresas registradas. Haga clic en "Nueva Empresa" para agregar una.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-note">
+    <strong>Nota:</strong> El sistema requiere mínimo 4 empresas con datos completos para generar comparaciones y promedios sectoriales en los informes.
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para obtener el CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function getCsrfToken() {
+        // Intentar obtener del formulario existente
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfInput) {
+            return csrfInput.value;
+        }
+        // Obtener del cookie
+        return getCookie('csrftoken');
+    }
+    
+    // Manejar eliminación de empresas
+    const botonesEliminar = document.querySelectorAll('.btn-eliminar-empresa');
+    
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', function() {
+            const empresaId = this.getAttribute('data-empresa-id');
+            const empresaNombre = this.getAttribute('data-empresa-nombre');
+            
+            if (confirm(`¿Está seguro de eliminar la empresa "${empresaNombre}"? Se eliminarán todos sus datos asociados.`)) {
+                // Crear formulario para enviar POST request (Django DeleteView usa POST)
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/catalogos/empresas/${empresaId}/eliminar/`;
+                
+                // Agregar CSRF token
+                const csrfToken = getCsrfToken();
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken;
+                    form.appendChild(csrfInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

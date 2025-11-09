@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Análisis Financiero{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <div class="alert-icon">
+                    {% if message.tags == 'success' %}
+                        ✓
+                    {% elif message.tags == 'error' %}
+                        ✕
+                    {% else %}
+                        ℹ
+                    {% endif %}
+                </div>
+                <span class="alert-message">{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
