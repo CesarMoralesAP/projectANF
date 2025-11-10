@@ -14,7 +14,7 @@ urlpatterns = [
     # Redirigir la raíz al login
     path('', include('apps.usuarios.urls')),
     path('empresas/', include('apps.empresas.urls')),
-    # path('catalogos/', include('apps.catalogos.urls')),
+    path('catalogos/', include('apps.catalogos.urls')),
     # path('estados/', include('apps.estados.urls')),
     # path('analisis/', include('apps.analisis.urls')),
     # path('proyecciones/', include('apps.proyecciones.urls')),

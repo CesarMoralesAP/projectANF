@@ -1,0 +1,231 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Catálogos Contables - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Catálogos Contables</h2>
+        <p>Configure los catálogos contables y mapeo de cuentas para ratios</p>
+    </div>
+</div>
+
+<!-- Card para seleccionar empresa -->
+<div class="card">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Seleccionar Empresa</h3>
+        <p class="form-card-subtitle">Elija la empresa para configurar su catálogo contable</p>
+    </div>
+    <div class="form-card-content">
+        <form method="get" class="catalogo-form" id="formSeleccionarEmpresa">
+            <div class="form-group">
+                <label for="empresa" class="form-label">
+                    Empresa
+                </label>
+                <select name="empresa" id="empresa" class="form-control" onchange="this.form.submit()">
+                    <option value="">-- Seleccione una empresa --</option>
+                    {% for empresa in empresas %}
+                    <option value="{{ empresa.pk }}" {% if empresa_seleccionada and empresa_seleccionada.pk == empresa.pk %}selected{% endif %}>
+                        {{ empresa.nombre }} ({{ empresa.sector.nombre }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sección de Cuentas Contables (solo se muestra si hay empresa seleccionada) -->
+{% if empresa_seleccionada %}
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h3 class="form-card-title">Cuentas Contables</h3>
+            <p class="form-card-subtitle">Defina el catálogo de cuentas de la empresa</p>
+        </div>
+        <div style="display: flex; gap: var(--spacing-sm);">
+            <form method="get" action="{% url 'catalogos:descargar_plantilla' %}" style="display: inline-block;">
+                <button type="submit" class="btn btn-secondary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>Descargar Plantilla</span>
+                </button>
+            </form>
+            <label for="cargarExcel" class="btn btn-secondary" style="cursor: pointer;">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                </svg>
+                <span>Cargar Excel</span>
+            </label>
+            <input type="file" id="cargarExcel" accept=".xlsx,.xls" style="display: none;" onchange="cargarExcel(event)">
+            <!-- Formulario oculto para cargar Excel -->
+            <form id="formCargarExcel" method="post" action="{% url 'catalogos:cargar_excel' %}" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <input type="file" name="archivo" id="archivoExcel" accept=".xlsx,.xls">
+                <input type="hidden" name="empresa_id" value="{{ empresa_seleccionada.pk }}">
+            </form>
+            <button type="button" class="btn btn-primary" onclick="mostrarFormularioCuenta()">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Agregar Cuenta</span>
+            </button>
+        </div>
+    </div>
+    <div class="form-card-content">
+        <!-- Formulario para agregar cuenta (oculto por defecto) -->
+        <div id="formularioCuenta" style="display: none; margin-bottom: var(--spacing-lg); padding: var(--spacing-lg); background-color: var(--color-background); border-radius: var(--radius-sm);">
+            <form id="formAgregarCuenta" onsubmit="agregarCuenta(event)">
+                {% csrf_token %}
+                <input type="hidden" name="empresa_id" value="{{ empresa_seleccionada.pk }}">
+                <div class="form-grid" style="grid-template-columns: 1fr 2fr 1fr 1fr auto; align-items: end;">
+                    <div class="form-group">
+                        <label for="codigo" class="form-label">Código *</label>
+                        <input type="text" name="codigo" id="codigo" class="form-control" placeholder="0101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">Nombre de la cuenta *</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Activos corrientes" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo" class="form-label">Tipo de cuenta *</label>
+                        <select name="tipo" id="tipo" class="form-control" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for valor, nombre in tipos_cuenta %}
+                            <option value="{{ valor }}">{{ nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary" onclick="ocultarFormularioCuenta()" style="width: 100%;">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla de cuentas -->
+        {% if cuentas %}
+        <div style="overflow-x: auto;">
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: var(--color-background);">
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: left; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Código</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: left; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Nombre de la cuenta</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: left; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Tipo de cuenta</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: center; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaCuentas">
+                    {% for cuenta in cuentas %}
+                    <tr id="cuenta-{{ cuenta.id }}" style="border-bottom: 1px solid var(--color-border);">
+                        <td style="padding: var(--spacing-sm) var(--spacing-md);">{{ cuenta.codigo }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md);">{{ cuenta.nombre }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md);">{{ cuenta.get_tipo_display }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md); text-align: center;">
+                            <form method="post" action="{% url 'catalogos:eliminar_cuenta' cuenta.id %}" style="display: inline-block;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" style="padding: var(--spacing-xs) var(--spacing-sm); min-width: auto;" title="Eliminar cuenta">
+                                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <!-- Estado vacío -->
+        <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+            <svg style="width: 64px; height: 64px; margin: 0 auto var(--spacing-md); opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <p style="font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); margin-bottom: var(--spacing-xs);">No hay cuentas definidas</p>
+            <p style="font-size: var(--font-size-sm);">Agregue cuentas al catálogo contable</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function mostrarFormularioCuenta() {
+    document.getElementById('formularioCuenta').style.display = 'block';
+    document.getElementById('codigo').focus();
+}
+
+function ocultarFormularioCuenta() {
+    document.getElementById('formularioCuenta').style.display = 'none';
+    document.getElementById('formAgregarCuenta').reset();
+}
+
+function agregarCuenta(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    fetch('{% url "catalogos:agregar_cuenta" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recargar la página para mostrar la nueva cuenta
+            location.reload();
+        } else {
+            // Mostrar errores
+            let mensaje = 'Error al agregar la cuenta:\n';
+            for (const campo in data.errors) {
+                mensaje += campo + ': ' + data.errors[campo].join(', ') + '\n';
+            }
+            alert(mensaje);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al agregar la cuenta');
+    });
+}
+
+function cargarExcel(event) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+    
+    // Validar extensión del archivo
+    const extension = archivo.name.split('.').pop().toLowerCase();
+    if (extension !== 'xlsx' && extension !== 'xls') {
+        alert('Por favor, seleccione un archivo Excel (.xlsx o .xls)');
+        event.target.value = '';
+        return;
+    }
+    
+    // Usar DataTransfer para asignar el archivo al input del formulario oculto
+    const form = document.getElementById('formCargarExcel');
+    const fileInput = document.getElementById('archivoExcel');
+    
+    // Crear un nuevo DataTransfer y asignar el archivo
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(archivo);
+    fileInput.files = dataTransfer.files;
+    
+    // Enviar el formulario
+    form.submit();
+    
+    // Resetear el input original
+    event.target.value = '';
+}
+</script>
+{% endblock %}

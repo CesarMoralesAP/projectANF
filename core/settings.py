@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.usuarios',
     'apps.empresas',
-    # 'apps.catalogos',  # Se creará más adelante para cuentas contables
+    'apps.catalogos',
     'apps.estados',
     'apps.analisis',
     'apps.proyecciones',
