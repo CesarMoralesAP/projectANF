@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Informes y Análisis - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Informes y Análisis</h2>
+        <p>Seleccione una empresa para ver sus proyecciones</p>
+    </div>
+    <a href="{% url 'analisis:historial_proyecciones' %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Ver Historial</span>
+    </a>
+</div>
+
+<div class="empresas-grid">
+    {% for empresa in empresas %}
+    <div class="empresa-card card">
+        <div class="card-icon empresa-card-icon">
+            <div class="card-icon-inner"></div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">{{ empresa.nombre }}</h3>
+            <p class="card-subtitle">Sector: {{ empresa.sector.nombre }}</p>
+            <p class="card-meta">Creada: {{ empresa.creado_en|date:"d/m/Y" }}</p>
+            
+            <!-- Botón de acción -->
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'analisis:proyeccion_metodos' empresa.pk %}" 
+                   class="btn btn-primary" 
+                   style="width: 100%;">
+                    📊 Gráfico x 3 Métodos
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="info-note" style="grid-column: 1 / -1;">
+        <p>No hay empresas registradas en el sistema.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>📈 Métodos de Proyección:</strong>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li><strong>Valor Incremental:</strong> Proyección basada en incrementos porcentuales</li>
+        <li><strong>Valor Absoluto:</strong> Proyección basada en diferencias absolutas</li>
+        <li><strong>Mínimos Cuadrados:</strong> Proyección por regresión lineal (próximamente)</li>
+    </ul>
+</div>
+{% endblock %}

@@ -92,6 +92,15 @@
             <h3 class="card-title">{{ empresa.nombre }}</h3>
             <p class="card-subtitle">Sector: {{ empresa.sector.nombre }}</p>
             <p class="card-meta">Creada: {{ empresa.creado_en|date:"d/m/Y" }}</p>
+            
+            <!-- Botón de acción -->
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'catalogos:catalogo_lista' %}?empresa={{ empresa.pk }}" 
+                   class="btn btn-secondary" 
+                   style="width: 100%;">
+                    📖 Ver Catálogo
+                </a>
+            </div>
         </div>
         <div class="card-actions">
             {% if request.user.is_superuser or request.user|es_administrador %}
