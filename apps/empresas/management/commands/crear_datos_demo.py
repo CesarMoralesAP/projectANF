@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from apps.catalogos.models import Sector, Empresa
+from apps.empresas.models import Sector, Empresa
 
 
 class Command(BaseCommand):
@@ -11,16 +11,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Crear sectores
         sectores_data = [
-            {'nombre': 'Mineria', 'descripcion': 'Sector minero'},
-            {'nombre': 'Bancario', 'descripcion': 'Sector bancario'},
-            {'nombre': 'Comercio', 'descripcion': 'Sector comercial'},
-            {'nombre': 'Servicios', 'descripcion': 'Sector de servicios'},
+            {'nombre': 'Mineria'},
+            {'nombre': 'Bancario'},
+            {'nombre': 'Comercio'},
+            {'nombre': 'Servicios'},
         ]
         
         for sector_data in sectores_data:
             sector, created = Sector.objects.get_or_create(
-                nombre=sector_data['nombre'],
-                defaults={'descripcion': sector_data['descripcion']}
+                nombre=sector_data['nombre']
             )
             if created:
                 self.stdout.write(
@@ -38,8 +37,6 @@ class Command(BaseCommand):
                 nombre='Banco agrícola',
                 defaults={
                     'sector': sector_mineria,
-                    'nit': '1234-567890-123-4',
-                    'email': 'contacto@bancoagricola.com'
                 }
             )
             if created:

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     # Apps locales
     'apps.core',
     'apps.usuarios',
-    'apps.catalogos',
+    'apps.empresas',
+    # 'apps.catalogos',  # Se creará más adelante para cuentas contables
     'apps.estados',
     'apps.analisis',
     'apps.proyecciones',
@@ -151,7 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication settings
 LOGIN_URL = 'usuarios:login'
-LOGIN_REDIRECT_URL = 'catalogos:empresa_lista'
+LOGIN_REDIRECT_URL = 'empresas:empresa_lista'
 LOGOUT_REDIRECT_URL = 'usuarios:login'
 
 # Configuración de sesión

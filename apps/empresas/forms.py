@@ -28,8 +28,8 @@ class EmpresaForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Cargar solo sectores activos
-        self.fields['sector'].queryset = Sector.objects.filter(activo=True).order_by('nombre')
+        # Cargar sectores
+        self.fields['sector'].queryset = Sector.objects.all().order_by('nombre')
         self.fields['sector'].empty_label = 'Seleccione un sector'
         # Agregar asterisco a los labels para indicar que son requeridos
         self.fields['nombre'].label += ' *'

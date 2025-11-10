@@ -24,12 +24,15 @@
                 </div>
             </div>
             <div class="header-right">
-                <a href="{% url 'usuarios:logout' %}" class="btn-logout">
-                    <span>Cerrar Sesión</span>
-                    <svg class="btn-logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </a>
+                <form method="post" action="{% url 'usuarios:logout' %}" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">
+                        <span>Cerrar Sesión</span>
+                        <svg class="btn-logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </form>
             </div>
         </header>
 
@@ -40,7 +43,7 @@
                 <nav>
                     <ul class="sidebar-menu">
                         <li class="sidebar-menu-item">
-                            <a href="{% url 'catalogos:empresa_lista' %}" class="sidebar-menu-link {% if request.resolver_match.app_name == 'catalogos' and request.resolver_match.url_name == 'empresa_lista' %}active{% endif %}">
+                            <a href="{% url 'empresas:empresa_lista' %}" class="sidebar-menu-link {% if request.resolver_match.app_name == 'empresas' and request.resolver_match.url_name == 'empresa_lista' %}active{% endif %}">
                                 <span class="sidebar-menu-icon">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -115,12 +118,14 @@
     <!-- Mensajes -->
     {% if messages %}
         {% for message in messages %}
-            <div class="toast-message">
+            <div class="toast-message {{ message.tags }}">
                 <div class="toast-icon">
                     {% if message.tags == 'success' %}
                         ✓
-                    {% elif message.tags == 'error' %}
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
                         ✕
+                    {% elif message.tags == 'warning' %}
+                        ⚠
                     {% else %}
                         ℹ
                     {% endif %}

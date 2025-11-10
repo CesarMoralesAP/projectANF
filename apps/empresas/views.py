@@ -13,13 +13,13 @@ class EmpresaListView(LoginRequiredMixin, ListView):
     Maneja GET para mostrar lista y formulario, POST para crear empresa.
     """
     model = Empresa
-    template_name = 'catalogos/empresa_lista.html'
+    template_name = 'empresas/empresa_lista.html'
     context_object_name = 'empresas'
     paginate_by = 10
     form_class = EmpresaForm
     
     def get_queryset(self):
-        return Empresa.objects.filter(activo=True).select_related('sector').order_by('nombre')
+        return Empresa.objects.all().select_related('sector').order_by('nombre')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,7 +39,7 @@ class EmpresaListView(LoginRequiredMixin, ListView):
             context['mostrar_formulario'] = False
         
         # Cargar sectores para el select
-        context['sectores'] = Sector.objects.filter(activo=True).order_by('nombre')
+        context['sectores'] = Sector.objects.all().order_by('nombre')
         
         return context
     
@@ -53,7 +53,7 @@ class EmpresaListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             empresa = form.save()
             messages.success(request, f'Empresa "{empresa.nombre}" creada exitosamente.')
-            return redirect('catalogos:empresa_lista')
+            return redirect('empresas:empresa_lista')
         else:
             # Si hay errores, renderizar la página con el formulario y errores
             messages.error(request, 'Por favor, corrija los errores en el formulario.')
@@ -69,18 +69,18 @@ class EmpresaListView(LoginRequiredMixin, ListView):
 
 class EmpresaDeleteView(LoginRequiredMixin, DeleteView):
     """
-    Vista para eliminar una empresa (soft delete).
+    Vista para eliminar una empresa.
     """
     model = Empresa
-    success_url = reverse_lazy('catalogos:empresa_lista')
+    success_url = reverse_lazy('empresas:empresa_lista')
     
     def delete(self, request, *args, **kwargs):
         """
-        Sobrescribe el método delete para realizar soft delete y mostrar mensaje personalizado.
+        Sobrescribe el método delete para mostrar mensaje personalizado.
         """
         empresa = self.get_object()
         nombre_empresa = empresa.nombre
-        empresa.activo = False  # Soft delete
-        empresa.save()
+        empresa.delete()  # Eliminación permanente
         messages.success(request, f'Empresa "{nombre_empresa}" eliminada exitosamente.')
         return redirect(self.success_url)
+

@@ -1,0 +1,22 @@
+<!-- Modal de Confirmación -->
+<div id="modalConfirmacion" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-icon modal-icon-warning">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 class="modal-title">Confirmar Eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="modal-message" id="modalMensaje"></p>
+            <p class="modal-warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="modalCancelar">Cancelar</button>
+            <button type="button" class="btn btn-danger-modal" id="modalConfirmar">Eliminar</button>
+        </div>
+    </div>
+</div>
+

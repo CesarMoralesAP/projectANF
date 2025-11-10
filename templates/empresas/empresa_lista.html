@@ -74,7 +74,7 @@
             <!-- Botones de acción -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Crear Empresa</button>
-                <a href="{% url 'catalogos:empresa_lista' %}" class="btn btn-secondary">Cancelar</a>
+                <a href="{% url 'empresas:empresa_lista' %}" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear formulario para enviar POST request (Django DeleteView usa POST)
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = `/catalogos/empresas/${empresaIdEliminar}/eliminar/`;
+        form.action = `/empresas/${empresaIdEliminar}/eliminar/`;
         
         // Agregar CSRF token
         const csrfToken = getCsrfToken();
@@ -226,3 +226,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+

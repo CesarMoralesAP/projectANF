@@ -16,7 +16,7 @@ class VistaLogin(LoginView):
     
     def get_success_url(self):
         """Redirige después de un login exitoso."""
-        return reverse_lazy('catalogos:empresa_lista')
+        return reverse_lazy('empresas:empresa_lista')
     
     def form_valid(self, form):
         """Maneja un formulario válido."""
@@ -27,7 +27,8 @@ class VistaLogin(LoginView):
     
     def form_invalid(self, form):
         """Maneja un formulario inválido."""
-        messages.error(self.request, 'Email o contraseña incorrectos. Por favor, intente nuevamente.')
+        # El formulario ya maneja los errores de validación y los muestra en el template
+        # No necesitamos agregar un mensaje adicional aquí para evitar duplicados
         return super().form_invalid(form)
 
 
@@ -36,8 +37,10 @@ class VistaLogout(LogoutView):
     Vista basada en clase para cerrar sesión.
     """
     next_page = reverse_lazy('usuarios:login')
+    http_method_names = ['post', 'get']  # Permitir GET y POST para compatibilidad
     
     def dispatch(self, request, *args, **kwargs):
         """Muestra mensaje al cerrar sesión."""
-        messages.info(request, 'Sesión cerrada exitosamente.')
+        if request.user.is_authenticated:
+            messages.success(request, 'Sesión cerrada exitosamente.')
         return super().dispatch(request, *args, **kwargs)

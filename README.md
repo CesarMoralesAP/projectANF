@@ -165,4 +165,11 @@ Si ves el mensaje "No migrations to apply", significa que todo está correcto.
 python manage.py createsuperuser
 ```
 
-Sigue las instrucciones en pantalla para crear tu cuenta de administrador personal.
+Sigue las instrucciones en pantalla para crear tu cuenta de administrador personal. 
+
+O puedes crear datos de prueba iniciales con los comandos:
+
+```bash
+python manage.py crear_usuarios_demo
+python manage.py crear_datos_demo
+```

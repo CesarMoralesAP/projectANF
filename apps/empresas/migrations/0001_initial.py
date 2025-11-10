@@ -18,9 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creado_en', models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')),
                 ('actualizado_en', models.DateTimeField(auto_now=True, verbose_name='Fecha de actualización')),
-                ('activo', models.BooleanField(default=True, verbose_name='Activo')),
                 ('nombre', models.CharField(max_length=100, verbose_name='Nombre del sector')),
-                ('descripcion', models.TextField(blank=True, null=True, verbose_name='Descripción')),
             ],
             options={
                 'verbose_name': 'Sector',
@@ -35,13 +33,8 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creado_en', models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')),
                 ('actualizado_en', models.DateTimeField(auto_now=True, verbose_name='Fecha de actualización')),
-                ('activo', models.BooleanField(default=True, verbose_name='Activo')),
                 ('nombre', models.CharField(max_length=200, verbose_name='Nombre de la empresa')),
-                ('nit', models.CharField(blank=True, max_length=20, null=True, unique=True, verbose_name='NIT')),
-                ('direccion', models.TextField(blank=True, null=True, verbose_name='Dirección')),
-                ('telefono', models.CharField(blank=True, max_length=20, null=True, verbose_name='Teléfono')),
-                ('email', models.EmailField(blank=True, max_length=254, null=True, verbose_name='Email')),
-                ('sector', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='empresas', to='catalogos.sector', verbose_name='Sector')),
+                ('sector', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='empresas', to='empresas.sector', verbose_name='Sector')),
             ],
             options={
                 'verbose_name': 'Empresa',
@@ -51,3 +44,4 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+

@@ -8,7 +8,6 @@ class ModeloBase(models.Model):
     """
     creado_en = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
     actualizado_en = models.DateTimeField(auto_now=True, verbose_name='Fecha de actualización')
-    activo = models.BooleanField(default=True, verbose_name='Activo')
     
     class Meta:
         abstract = True

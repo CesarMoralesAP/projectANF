@@ -88,6 +88,11 @@ body {
     text-decoration: none;
 }
 
+/* Estilos para el botón de logout cuando es un button dentro de un form */
+form .btn-logout {
+    margin: 0;
+}
+
 .btn-logout:hover {
     background-color: var(--color-border);
 }

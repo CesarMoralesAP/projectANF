@@ -7,7 +7,6 @@ class Sector(ModeloBase):
     Modelo para los sectores económicos de las empresas.
     """
     nombre = models.CharField(max_length=100, verbose_name='Nombre del sector')
-    descripcion = models.TextField(blank=True, null=True, verbose_name='Descripción')
     
     class Meta:
         db_table = 'sector'
@@ -30,16 +29,6 @@ class Empresa(ModeloBase):
         related_name='empresas',
         verbose_name='Sector'
     )
-    nit = models.CharField(
-        max_length=20,
-        unique=True,
-        blank=True,
-        null=True,
-        verbose_name='NIT'
-    )
-    direccion = models.TextField(blank=True, null=True, verbose_name='Dirección')
-    telefono = models.CharField(max_length=20, blank=True, null=True, verbose_name='Teléfono')
-    email = models.EmailField(blank=True, null=True, verbose_name='Email')
     
     class Meta:
         db_table = 'empresa'
@@ -49,3 +38,4 @@ class Empresa(ModeloBase):
     
     def __str__(self):
         return self.nombre
+
