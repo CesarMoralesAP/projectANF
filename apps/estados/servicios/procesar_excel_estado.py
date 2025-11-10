@@ -27,13 +27,18 @@ def procesar_excel_estado(archivo, empresa, año, tipo_estado):
         wb = openpyxl.load_workbook(archivo)
         ws = wb.active
         
-        # Validar encabezados
-        headers = [cell.value for cell in ws[1]]
+        # Validar encabezados (normalizar para comparación)
+        headers = [str(cell.value).strip() if cell.value else '' for cell in ws[1]]
         headers_esperados = ['Código de la cuenta', 'Nombre de la cuenta', 'Tipo de cuenta', 'Monto']
         
-        if headers != headers_esperados:
+        # Comparar normalizando (case-insensitive y sin espacios extras)
+        headers_normalizados = [h.strip().lower() for h in headers]
+        headers_esperados_normalizados = [h.strip().lower() for h in headers_esperados]
+        
+        if headers_normalizados != headers_esperados_normalizados:
             errores.append(
-                f'Los encabezados no coinciden. Se esperaban: {", ".join(headers_esperados)}'
+                f'Los encabezados no coinciden. Se esperaban: {", ".join(headers_esperados)}. '
+                f'Se encontraron: {", ".join(headers)}'
             )
             return False, errores, 0
         
@@ -99,11 +104,21 @@ def procesar_excel_estado(archivo, empresa, año, tipo_estado):
                     )
                     continue
                 
-                # Validar que el tipo de cuenta coincide
-                if cuenta.tipo != tipo_cuenta_str:
+                # Validar que el tipo de cuenta coincide (comparar normalizado)
+                # El tipo_cuenta_str puede venir como "Activo" (display) o "ACTIVO" (valor)
+                tipo_cuenta_normalizado = tipo_cuenta_str.upper().strip()
+                cuenta_tipo_normalizado = cuenta.tipo.upper().strip()
+                
+                # Verificar si el tipo coincide (puede venir como valor o como display)
+                tipos_coinciden = (
+                    cuenta_tipo_normalizado == tipo_cuenta_normalizado or
+                    cuenta.get_tipo_display().upper().strip() == tipo_cuenta_normalizado
+                )
+                
+                if not tipos_coinciden:
                     errores.append(
                         f'Fila {row_num}: El tipo de cuenta no coincide. '
-                        f'Esperado: {tipo_cuenta_str}, Encontrado: {cuenta.get_tipo_display()}'
+                        f'En Excel: "{tipo_cuenta_str}", En catálogo: "{cuenta.get_tipo_display()}" (valor: {cuenta.tipo})'
                     )
                     continue
                 
@@ -116,7 +131,7 @@ def procesar_excel_estado(archivo, empresa, año, tipo_estado):
                     continue
                 
                 # Validar y convertir monto
-                if monto_str is None:
+                if monto_str is None or monto_str == '':
                     monto = Decimal('0.00')
                 else:
                     try:
@@ -125,17 +140,40 @@ def procesar_excel_estado(archivo, empresa, año, tipo_estado):
                             monto = Decimal(str(monto_str))
                         elif isinstance(monto_str, str):
                             # Limpiar el string (remover espacios, comas como separadores de miles)
-                            monto_str_limpio = monto_str.strip().replace(',', '')
+                            # Pero mantener el punto como separador decimal
+                            monto_str_limpio = monto_str.strip()
+                            # Si tiene coma, puede ser separador de miles o decimal
+                            # Si tiene punto, el punto es decimal
+                            if '.' in monto_str_limpio and ',' in monto_str_limpio:
+                                # Formato tipo "1.234,56" o "1,234.56"
+                                if monto_str_limpio.rindex('.') > monto_str_limpio.rindex(','):
+                                    # Punto después de coma: "1,234.56" (formato inglés)
+                                    monto_str_limpio = monto_str_limpio.replace(',', '')
+                                else:
+                                    # Coma después de punto: "1.234,56" (formato europeo)
+                                    monto_str_limpio = monto_str_limpio.replace('.', '').replace(',', '.')
+                            elif ',' in monto_str_limpio:
+                                # Solo coma: puede ser decimal o miles
+                                # Si hay más de 3 dígitos después de la coma, probablemente es decimal
+                                partes = monto_str_limpio.split(',')
+                                if len(partes) == 2 and len(partes[1]) <= 2:
+                                    # Coma como separador decimal
+                                    monto_str_limpio = monto_str_limpio.replace(',', '.')
+                                else:
+                                    # Coma como separador de miles
+                                    monto_str_limpio = monto_str_limpio.replace(',', '')
+                            
                             monto = Decimal(monto_str_limpio)
                         else:
                             monto = Decimal('0.00')
-                    except (InvalidOperation, ValueError):
+                    except (InvalidOperation, ValueError, Exception) as e:
                         errores.append(
-                            f'Fila {row_num}: El monto "{monto_str}" no es un número válido.'
+                            f'Fila {row_num}: El monto "{monto_str}" no es un número válido. Error: {str(e)}'
                         )
                         continue
                 
-                # Crear item del estado financiero
+                # Crear item del estado financiero (solo si el monto es diferente de 0 o si queremos guardar todos)
+                # Por ahora, guardamos todos los items, incluso si el monto es 0
                 try:
                     ItemEstadoFinanciero.objects.create(
                         estado_financiero=estado_financiero,
@@ -145,12 +183,21 @@ def procesar_excel_estado(archivo, empresa, año, tipo_estado):
                     items_procesados += 1
                 except Exception as e:
                     errores.append(f'Fila {row_num}: Error al crear item - {str(e)}')
+                    import traceback
+                    print(f"Error al crear item en fila {row_num}: {traceback.format_exc()}")
             
             éxito = len(errores) == 0
     
     except Exception as e:
+        import traceback
+        error_detalle = traceback.format_exc()
         errores.append(f'Error al procesar el archivo: {str(e)}')
+        # Agregar detalles del error para debugging
+        print(f"Error al procesar Excel: {error_detalle}")
         éxito = False
     
+    # Considerar éxito si se procesaron items, incluso si hubo algunos errores
+    # El éxito total solo será True si no hubo errores
+    # Pero retornamos los items procesados para que la vista pueda mostrar un mensaje apropiado
     return éxito, errores, items_procesados
 

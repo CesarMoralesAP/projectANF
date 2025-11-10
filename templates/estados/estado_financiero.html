@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load estados_extras %}
 
 {% block title %}Estados Financieros - Sistema de Análisis Financiero{% endblock %}
 
@@ -107,7 +108,7 @@
                                         id="monto_{{ cuenta.id }}" 
                                         class="form-control monto-input" 
                                         step="0.01" 
-                                        value="{{ cuenta.monto|floatformat:2 }}"
+                                        value="{{ cuenta.monto|monto_input }}"
                                         placeholder="0.00"
                                         style="width: 100%; max-width: 100%; box-sizing: border-box;"
                                     >
@@ -346,8 +347,24 @@ function guardarEstado(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Recargar la página para mostrar el estado guardado
-            location.reload();
+            // Mostrar mensaje de éxito
+            if (data.message) {
+                // Crear un mensaje temporal de éxito
+                const successMsg = document.createElement('div');
+                successMsg.className = 'alert alert-success';
+                successMsg.textContent = data.message;
+                successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 15px; background-color: #10B981; color: white; border-radius: 5px;';
+                document.body.appendChild(successMsg);
+                setTimeout(() => {
+                    successMsg.remove();
+                }, 3000);
+            }
+            // Redirigir a la misma página con los parámetros para mostrar los valores actualizados
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else {
+                location.reload();
+            }
         } else {
             alert('Error al guardar el estado financiero: ' + (data.error || 'Error desconocido'));
         }

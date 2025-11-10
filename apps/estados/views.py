@@ -41,7 +41,7 @@ class EstadoFinancieroView(LoginRequiredMixin, TemplateView):
         catalogo = None
         cuentas_por_tipo = defaultdict(list)
         estado_existente = None
-        items_existentes = {}
+        items_existentes = {}  # Diccionario: {cuenta_id: monto}
         
         # Si hay empresa seleccionada
         if empresa_id:
@@ -77,7 +77,8 @@ class EstadoFinancieroView(LoginRequiredMixin, TemplateView):
                         # Obtener items existentes
                         items = estado_existente.items.select_related('cuenta_contable').all()
                         for item in items:
-                            items_existentes[item.cuenta_contable.id] = item.monto
+                            # Convertir Decimal a float para que se muestre correctamente en el template
+                            items_existentes[item.cuenta_contable.id] = float(item.monto)
                     except EstadoFinanciero.DoesNotExist:
                         estado_existente = None
                     
@@ -122,12 +123,13 @@ class EstadoFinancieroView(LoginRequiredMixin, TemplateView):
                             else:
                                 # Agrupar cuentas por tipo
                                 for cuenta in cuentas:
+                                    monto = items_existentes.get(cuenta.id, 0.00)
                                     cuentas_por_tipo[cuenta.get_tipo_display()].append({
                                         'id': cuenta.id,
                                         'codigo': cuenta.codigo,
                                         'nombre': cuenta.nombre,
                                         'tipo': cuenta.get_tipo_display(),
-                                        'monto': items_existentes.get(cuenta.id, 0.00)
+                                        'monto': monto
                                     })
             except Exception as e:
                 messages.error(self.request, f'Error al cargar los datos: {str(e)}')
@@ -257,23 +259,27 @@ class GuardarEstadoFinancieroView(LoginRequiredMixin, View):
                         
                         try:
                             cuenta = CuentaContable.objects.get(pk=cuenta_id, catalogo=catalogo)
-                            monto = float(value) if value else 0.00
+                            # Convertir el valor a float, si está vacío o es None, usar 0.00
+                            monto_str = value.strip() if value else '0.00'
+                            monto = float(monto_str) if monto_str else 0.00
                             
-                            # Crear item solo si el monto es diferente de 0
-                            if monto != 0.00:
-                                ItemEstadoFinanciero.objects.create(
-                                    estado_financiero=estado_financiero,
-                                    cuenta_contable=cuenta,
-                                    monto=monto
-                                )
-                                items_creados += 1
+                            # Guardar el item siempre, incluso si el monto es 0.00
+                            # Esto permite que el usuario pueda "limpiar" valores estableciéndolos en 0
+                            ItemEstadoFinanciero.objects.create(
+                                estado_financiero=estado_financiero,
+                                cuenta_contable=cuenta,
+                                monto=monto
+                            )
+                            items_creados += 1
                         except (CuentaContable.DoesNotExist, ValueError) as e:
                             continue
                 
+                # Redirigir a la misma página con los parámetros para mostrar los valores actualizados
                 return JsonResponse({
                     'success': True,
                     'message': f'Estado financiero {"creado" if creado else "actualizado"} exitosamente. {items_creados} cuenta(s) registrada(s).',
-                    'estado_id': estado_financiero.id
+                    'estado_id': estado_financiero.id,
+                    'redirect_url': reverse('estados:estado_financiero') + f'?empresa={empresa.id}&año={año_int}&tipo={tipo}'
                 })
         
         except Exception as e:
@@ -303,25 +309,38 @@ class CargarExcelEstadoView(LoginRequiredMixin, View):
         form = CargarExcelEstadoForm(request.POST, request.FILES)
         if form.is_valid():
             archivo = request.FILES['archivo']
-            éxito, errores, items_procesados = procesar_excel_estado(archivo, empresa, año_int, tipo)
-            
-            if errores:
-                for error in errores:
-                    messages.warning(request, error)
-            
-            if éxito:
-                messages.success(
-                    request,
-                    f'Estado financiero cargado exitosamente. Se procesaron {items_procesados} cuenta(s).'
-                )
-            elif items_procesados > 0:
-                messages.warning(
-                    request,
-                    f'Se procesaron {items_procesados} cuenta(s), pero hubo algunos errores. Revise los mensajes arriba.'
-                )
-            else:
-                messages.error(request, 'No se pudo procesar el archivo. Revise los mensajes de error.')
+            try:
+                éxito, errores, items_procesados = procesar_excel_estado(archivo, empresa, año_int, tipo)
+                
+                # Mostrar errores si los hay
+                if errores:
+                    for error in errores:
+                        messages.error(request, error)
+                
+                # Mostrar mensaje de éxito o advertencia
+                if éxito:
+                    messages.success(
+                        request,
+                        f'Estado financiero cargado exitosamente. Se procesaron {items_procesados} cuenta(s).'
+                    )
+                elif items_procesados > 0:
+                    messages.warning(
+                        request,
+                        f'Se procesaron {items_procesados} cuenta(s), pero hubo algunos errores. Revise los mensajes de error arriba.'
+                    )
+                else:
+                    if not errores:
+                        messages.error(request, 'No se pudo procesar el archivo. No se encontraron datos válidos para procesar.')
+                    # Si hay errores, ya se mostraron arriba
+            except Exception as e:
+                messages.error(request, f'Error al procesar el archivo Excel: {str(e)}')
+                import traceback
+                print(f"Error completo: {traceback.format_exc()}")
         else:
+            # Mostrar errores del formulario
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en {field}: {error}')
             messages.error(request, 'Por favor, seleccione un archivo Excel válido.')
         
         return redirect(reverse('estados:estado_financiero') + f'?empresa={empresa_id}&año={año}&tipo={tipo}')
