@@ -160,6 +160,293 @@
         margin: 0;
     }
 
+    /* Pestañas principales */
+    .tabs-container {
+        width: 100%;
+    }
+
+    .tabs-header {
+        display: flex;
+        gap: var(--spacing-xs);
+        border-bottom: 2px solid var(--color-border);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .tab-button {
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .tab-button:hover {
+        color: var(--color-primary);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .tab-button.active {
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
+    }
+
+    .tabs-content {
+        width: 100%;
+    }
+
+    .tab-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .tab-panel.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Sub-pestañas */
+    .subtabs-container {
+        width: 100%;
+    }
+
+    .subtabs-header {
+        display: flex;
+        gap: var(--spacing-xs);
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: var(--spacing-lg);
+        background: var(--color-background);
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-sm);
+    }
+
+    .subtab-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: transparent;
+        border: none;
+        border-radius: var(--radius-sm);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .subtab-button:hover {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--color-primary);
+    }
+
+    .subtab-button.active {
+        background: var(--color-primary);
+        color: white;
+    }
+
+    .subtab-panel {
+        display: none;
+    }
+
+    .subtab-panel.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* Secciones de contenido */
+    .ratios-section,
+    .analisis-section,
+    .graficas-section {
+        width: 100%;
+    }
+
+    .section-title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .section-subtitle {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    /* Tabla de ratios */
+    .tabla-container {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: var(--spacing-lg);
+    }
+
+    .tabla-ratios {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--color-surface);
+    }
+
+    .tabla-ratios thead tr {
+        background: var(--color-background);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    .tabla-ratios th {
+        padding: var(--spacing-md) var(--spacing-lg);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-base);
+        vertical-align: middle;
+    }
+
+    .tabla-ratios th.col-ratio {
+        width: 25%;
+        min-width: 200px;
+    }
+
+    .tabla-ratios th.col-year {
+        width: 25%;
+        min-width: 250px;
+    }
+
+    .tabla-ratios tbody tr {
+        border-bottom: 1px solid var(--color-border);
+        transition: background 0.2s ease;
+    }
+
+    .tabla-ratios tbody tr:hover {
+        background: rgba(99, 102, 241, 0.02);
+    }
+
+    .tabla-ratios td {
+        padding: var(--spacing-lg);
+        vertical-align: top;
+    }
+
+    /* Columna de información del ratio */
+    .tabla-ratios td.ratio-info {
+        background: var(--color-background);
+    }
+
+    .ratio-nombre {
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .ratio-parametros {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-sm);
+    }
+
+    .parametro-sectorial,
+    .parametro-promedio {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        padding: 2px 8px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .parametro-sectorial {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--color-primary);
+    }
+
+    .parametro-promedio {
+        background: rgba(107, 114, 128, 0.1);
+        color: var(--color-text-secondary);
+    }
+
+    /* Columna de valores */
+    .tabla-ratios td.ratio-valor {
+        text-align: left;
+    }
+
+    .valor-principal {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .interpretaciones {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .interpretacion {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        font-size: var(--font-size-xs);
+        padding: 4px 8px;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+    }
+
+    .interpretacion span {
+        line-height: 1.2;
+    }
+
+    .interpretacion.superior {
+        background: rgba(16, 185, 129, 0.1);
+        color: #065F46;
+    }
+
+    .interpretacion.inferior {
+        background: rgba(239, 68, 68, 0.1);
+        color: #991B1B;
+    }
+
+    .icono-flecha {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    .interpretacion.superior .icono-flecha {
+        stroke: #10B981;
+    }
+
+    .interpretacion.inferior .icono-flecha {
+        stroke: #EF4444;
+    }
+
+    /* Placeholder text */
+    .placeholder-text {
+        text-align: center;
+        padding: var(--spacing-2xl);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-base);
+        background: var(--color-background);
+        border-radius: var(--radius-sm);
+    }
+
+    .graficas-container {
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .form-section {
@@ -169,6 +456,26 @@
 
         .años-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tabs-header {
+            overflow-x: auto;
+            gap: 0;
+        }
+
+        .tab-button {
+            font-size: var(--font-size-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        .subtabs-header {
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .subtab-button {
+            width: 100%;
+            text-align: left;
         }
     }
 </style>
@@ -229,7 +536,7 @@
     </div>
 
     <!-- Placeholder para resultados -->
-    <div class="card-analisis">
+    <div class="card-analisis" id="placeholderResultados">
         <div class="resultado-placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M11.625 16.5a1.875 1.875 0 100-3.75 1.875 1.875 0 000 3.75z" />
@@ -237,6 +544,307 @@
                 <path d="M14.25 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0016.5 7.5h-1.875a.375.375 0 01-.375-.375V5.25z" />
             </svg>
             <p>Seleccione una empresa y años para generar el análisis</p>
+        </div>
+    </div>
+
+    <!-- Sección de resultados del análisis (oculta por defecto) -->
+    <div class="card-analisis" id="seccionResultados" style="display: none;">
+        <!-- Pestañas principales -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="ratios">Ratios Financieros</button>
+                <button class="tab-button" data-tab="horizontal">Análisis Horizontal</button>
+                <button class="tab-button" data-tab="vertical">Análisis Vertical</button>
+                <button class="tab-button" data-tab="graficas">Gráficas</button>
+            </div>
+
+            <!-- Contenido de pestañas -->
+            <div class="tabs-content">
+                <!-- Pestaña: Ratios Financieros -->
+                <div class="tab-panel active" id="tab-ratios">
+                    <div class="ratios-section">
+                        <h3 class="section-title">Ratios Financieros Calculados</h3>
+                        <p class="section-subtitle">Indicadores financieros por año con comparación sectorial</p>
+                        
+                        <div class="tabla-container">
+                            <table class="tabla-ratios">
+                                <thead>
+                                    <tr>
+                                        <th class="col-ratio">Ratio</th>
+                                        <th class="col-year">2020</th>
+                                        <th class="col-year">2021</th>
+                                        <th class="col-year">2023</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="ratio-info">
+                                            <div class="ratio-nombre">Liquidez Corriente</div>
+                                            <div class="ratio-parametros">
+                                                <span class="parametro-sectorial">Parámetro sectorial: 1.50</span>
+                                                <span class="parametro-promedio">Promedio general: 1.35</span>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">1.75</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">1.42</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">1.20</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ratio-info">
+                                            <div class="ratio-nombre">Prueba Ácida</div>
+                                            <div class="ratio-parametros">
+                                                <span class="parametro-sectorial">Parámetro sectorial: 1.00</span>
+                                                <span class="parametro-promedio">Promedio general: 0.95</span>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">1.15</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">0.92</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">1.08</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ratio-info">
+                                            <div class="ratio-nombre">Rotación Activo Total</div>
+                                            <div class="ratio-parametros">
+                                                <span class="parametro-sectorial">Parámetro sectorial: 2.50</span>
+                                                <span class="parametro-promedio">Promedio general: 2.20</span>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">2.65</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">2.10</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="ratio-valor">
+                                            <div class="valor-principal">2.45</div>
+                                            <div class="interpretaciones">
+                                                <div class="interpretacion inferior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                                    </svg>
+                                                    <span>Inferior al parámetro sectorial</span>
+                                                </div>
+                                                <div class="interpretacion superior">
+                                                    <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                                    </svg>
+                                                    <span>Superior al promedio general</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Análisis Horizontal -->
+                <div class="tab-panel" id="tab-horizontal">
+                    <!-- Sub-pestañas para tipos de estado -->
+                    <div class="subtabs-container">
+                        <div class="subtabs-header">
+                            <button class="subtab-button active" data-subtab="horizontal-balance">Balance General</button>
+                            <button class="subtab-button" data-subtab="horizontal-resultados">Estado de Resultados</button>
+                        </div>
+
+                        <!-- Balance General -->
+                        <div class="subtab-panel active" id="subtab-horizontal-balance">
+                            <div class="analisis-section">
+                                <h3 class="section-title">Análisis Horizontal - Balance General</h3>
+                                <p class="section-subtitle">Variaciones año tras año</p>
+                                
+                                <div class="tabla-container">
+                                    <p class="placeholder-text">El análisis horizontal se mostrará aquí una vez implementado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado de Resultados -->
+                        <div class="subtab-panel" id="subtab-horizontal-resultados">
+                            <div class="analisis-section">
+                                <h3 class="section-title">Análisis Horizontal - Estado de Resultados</h3>
+                                <p class="section-subtitle">Variaciones año tras año</p>
+                                
+                                <div class="tabla-container">
+                                    <p class="placeholder-text">El análisis horizontal se mostrará aquí una vez implementado</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Análisis Vertical -->
+                <div class="tab-panel" id="tab-vertical">
+                    <!-- Sub-pestañas para tipos de estado -->
+                    <div class="subtabs-container">
+                        <div class="subtabs-header">
+                            <button class="subtab-button active" data-subtab="vertical-balance">Balance General</button>
+                            <button class="subtab-button" data-subtab="vertical-resultados">Estado de Resultados</button>
+                        </div>
+
+                        <!-- Balance General -->
+                        <div class="subtab-panel active" id="subtab-vertical-balance">
+                            <div class="analisis-section">
+                                <h3 class="section-title">Análisis Vertical - Balance General</h3>
+                                <p class="section-subtitle">Estructura porcentual por año</p>
+                                
+                                <div class="tabla-container">
+                                    <p class="placeholder-text">El análisis vertical se mostrará aquí una vez implementado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado de Resultados -->
+                        <div class="subtab-panel" id="subtab-vertical-resultados">
+                            <div class="analisis-section">
+                                <h3 class="section-title">Análisis Vertical - Estado de Resultados</h3>
+                                <p class="section-subtitle">Estructura porcentual por año</p>
+                                
+                                <div class="tabla-container">
+                                    <p class="placeholder-text">El análisis vertical se mostrará aquí una vez implementado</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Gráficas -->
+                <div class="tab-panel" id="tab-graficas">
+                    <div class="graficas-section">
+                        <h3 class="section-title">Gráficas y Visualizaciones</h3>
+                        <p class="section-subtitle">Representación visual de los datos financieros</p>
+                        
+                        <div class="graficas-container">
+                            <p class="placeholder-text">Las gráficas se mostrarán aquí una vez implementadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -310,8 +918,24 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 mostrarAlerta(data.mensaje, 'success');
+                
+                // Mostrar sección de resultados y ocultar placeholder
+                document.getElementById('placeholderResultados').style.display = 'none';
+                document.getElementById('seccionResultados').style.display = 'block';
+                
+                // Scroll suave hacia la sección de resultados
+                setTimeout(() => {
+                    document.getElementById('seccionResultados').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }, 300);
             } else {
                 mostrarAlerta(data.mensaje, 'error');
+                
+                // Ocultar sección de resultados si había sido mostrada
+                document.getElementById('placeholderResultados').style.display = 'block';
+                document.getElementById('seccionResultados').style.display = 'none';
             }
         })
         .catch(error => {
@@ -358,6 +982,42 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => toast.remove(), 300);
         }, 5000);
     }
+    
+    // Manejo de pestañas principales
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Remover active de todos los botones y paneles
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            
+            // Activar el botón y panel actual
+            this.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        });
+    });
+    
+    // Manejo de sub-pestañas
+    const subtabButtons = document.querySelectorAll('.subtab-button');
+    
+    subtabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const subtabId = this.getAttribute('data-subtab');
+            const parent = this.closest('.subtabs-container');
+            
+            // Remover active de todos los botones y paneles dentro del contenedor padre
+            parent.querySelectorAll('.subtab-button').forEach(btn => btn.classList.remove('active'));
+            parent.querySelectorAll('.subtab-panel').forEach(panel => panel.classList.remove('active'));
+            
+            // Activar el botón y panel actual
+            this.classList.add('active');
+            document.getElementById(`subtab-${subtabId}`).classList.add('active');
+        });
+    });
 });
 </script>
 {% endblock %}

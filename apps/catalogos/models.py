@@ -95,6 +95,14 @@ class RatioFinanciero(ModeloBase):
         verbose_name='Categoría',
         help_text='Ejemplo: Liquidez, Endeudamiento, Rentabilidad'
     )
+    promedio_general = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        null=True,
+        blank=True,
+        verbose_name='Promedio General',
+        help_text='Ratio promedio de todas las empresas en el sistema'
+    )
     
     class Meta:
         db_table = 'ratio_financiero'

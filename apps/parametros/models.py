@@ -27,6 +27,14 @@ class RatioReferenciaSector(ModeloBase):
         verbose_name='Valor Óptimo',
         help_text='Valor de referencia óptimo para este ratio en el sector'
     )
+    promedio_sector = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        null=True,
+        blank=True,
+        verbose_name='Promedio del Sector',
+        help_text='Ratio promedio de las empresas clasificadas en este sector'
+    )
     
     class Meta:
         db_table = 'ratio_referencia_sector'
