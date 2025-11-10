@@ -1,0 +1,145 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load parametros_extras %}
+
+{% block title %}Parámetros Sectoriales - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Parámetros Sectoriales</h2>
+        <p>Defina los ratios de referencia por sector</p>
+    </div>
+</div>
+
+<!-- Sección de Sectores Configurados -->
+<div class="card">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Sectores Configurados</h3>
+        <p class="form-card-subtitle">Seleccione un sector para configurar sus ratios de referencia</p>
+    </div>
+    <div class="form-card-content">
+        {% if sectores_con_conteo %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+            {% for item in sectores_con_conteo %}
+            <a href="?sector={{ item.sector.pk }}" style="text-decoration: none; color: inherit;">
+                <div class="card" style="padding: var(--spacing-lg); background-color: #E0F2FE; border: 1px solid #B3E5FC; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; {% if sector_seleccionado and sector_seleccionado.pk == item.sector.pk %}border-color: var(--color-primary); border-width: 2px; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);{% endif %}" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                        <div style="width: 40px; height: 40px; background-color: #0284C7; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg fill="none" stroke="white" viewBox="0 0 24 24" width="24" height="24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <h4 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin: 0 0 var(--spacing-xs) 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.sector.nombre }}</h4>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0;">{{ item.ratios_configurados }} ratio{{ item.ratios_configurados|pluralize }} configurado{{ item.ratios_configurados|pluralize }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+            <svg style="width: 64px; height: 64px; margin: 0 auto var(--spacing-md); opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <p style="font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); margin-bottom: var(--spacing-xs);">No hay sectores disponibles</p>
+            <p style="font-size: var(--font-size-sm);">Cree sectores en el módulo de Empresas</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Sección de Ratios de Referencia del Sector -->
+{% if sector_seleccionado %}
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Ratios de Referencia del Sector</h3>
+        <p class="form-card-subtitle">Valores benchmark basados en fuentes como "Almanac of Business and Industrial Financial Ratios" o datos sectoriales de ministerios</p>
+    </div>
+    <div class="form-card-content">
+        <form method="post" action="{% url 'parametros:guardar_parametros' %}" id="formParametrosSector">
+            {% csrf_token %}
+            <input type="hidden" name="sector_id" value="{{ sector_seleccionado.pk }}">
+            
+            {% for categoria, ratios in ratios_por_categoria.items %}
+            <div style="margin-bottom: var(--spacing-xl);">
+                <h4 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-lg);">Ratios de {{ categoria }}</h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+                    {% for ratio in ratios %}
+                    <div class="form-group">
+                        <label for="ratio_{{ ratio.id }}" class="form-label">{{ ratio.nombre }}</label>
+                        <input 
+                            type="number" 
+                            name="ratio_{{ ratio.id }}" 
+                            id="ratio_{{ ratio.id }}" 
+                            class="form-control" 
+                            step="0.0001" 
+                            placeholder="0.0000"
+                            {% with valor=valores_referencia|get_item:ratio.id %}
+                            {% if valor is not None %}
+                            value="{{ valor }}"
+                            {% else %}
+                            value=""
+                            {% endif %}
+                            {% endwith %}
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Botón Guardar Parámetros al final -->
+            <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                    </svg>
+                    <span>Guardar Parámetros</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- Mensaje cuando no hay sector seleccionado -->
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-content">
+        <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+            <svg style="width: 64px; height: 64px; margin: 0 auto var(--spacing-md); opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p style="font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); margin-bottom: var(--spacing-xs);">Seleccione un sector</p>
+            <p style="font-size: var(--font-size-sm);">Seleccione un sector de la lista superior para configurar sus ratios de referencia</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Agregar efecto de hover mejorado a los cards de sectores
+document.addEventListener('DOMContentLoaded', function() {
+    const sectorCards = document.querySelectorAll('a[href*="?sector="]');
+    sectorCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            if (!this.querySelector('.card').style.borderColor.includes('rgb(59, 130, 246)')) {
+                this.querySelector('.card').style.backgroundColor = '#B3E5FC';
+            }
+        });
+        card.addEventListener('mouseleave', function() {
+            if (!this.querySelector('.card').style.borderColor.includes('rgb(59, 130, 246)')) {
+                this.querySelector('.card').style.backgroundColor = '#E0F2FE';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+

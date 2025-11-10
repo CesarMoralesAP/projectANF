@@ -1,0 +1,410 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Estados Financieros - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Estados Financieros</h2>
+        <p>Cargue balances y estados de resultados</p>
+    </div>
+</div>
+
+<!-- Card para seleccionar empresa, año y tipo -->
+<div class="card">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Estados Financieros</h3>
+        <p class="form-card-subtitle">Seleccione la empresa, año y tipo de estado financiero</p>
+    </div>
+    <div class="form-card-content">
+        <form method="get" class="catalogo-form" id="formSeleccionarEstado">
+            <div class="form-grid" style="grid-template-columns: 2fr 1fr 2fr;">
+                <div class="form-group">
+                    <label for="empresa" class="form-label">Empresa</label>
+                    <select name="empresa" id="empresa" class="form-control" onchange="actualizarFormulario()">
+                        <option value="">-- Seleccione --</option>
+                        {% for empresa in empresas %}
+                        <option value="{{ empresa.pk }}" {% if empresa_seleccionada and empresa_seleccionada.pk == empresa.pk %}selected{% endif %}>
+                            {{ empresa.nombre }} ({{ empresa.sector.nombre }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="año" class="form-label">Año</label>
+                    <input type="number" name="año" id="año" class="form-control" value="{% if año_seleccionado %}{{ año_seleccionado }}{% else %}{{ año_actual }}{% endif %}" min="2000" max="2100" onchange="actualizarFormulario()">
+                </div>
+                <div class="form-group">
+                    <label for="tipo" class="form-label">Tipo de Estado</label>
+                    <select name="tipo" id="tipo" class="form-control" onchange="actualizarFormulario()">
+                        <option value="">-- Seleccione --</option>
+                        {% for valor, nombre in tipos_estado %}
+                        <option value="{{ valor }}" {% if tipo_seleccionado == valor %}selected{% endif %}>{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mensaje de requisito -->
+<div class="card" style="margin-top: var(--spacing-xl); background-color: #E3F2FD; border: 1px solid #2196F3;">
+    <div class="form-card-content">
+        <p style="margin: 0; color: #1976D2;">
+            <strong>Requisito:</strong> Debe cargar datos de al menos 4 empresas, con 3 años cada una, incluyendo Balance General y Estado de Resultados para cada año.
+        </p>
+    </div>
+</div>
+
+<!-- Sección de Cargar Datos Financieros (solo se muestra si hay empresa, año y tipo seleccionados) -->
+{% if empresa_seleccionada and año_seleccionado and tipo_seleccionado and catalogo %}
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Cargar Datos Financieros</h3>
+        <p class="form-card-subtitle">Elija entre ingreso manual o carga desde archivo Excel</p>
+    </div>
+    <div class="form-card-content">
+        <!-- Tabs -->
+        <div class="tabs" style="margin-bottom: var(--spacing-lg);">
+            <button type="button" class="tab-button active" onclick="mostrarTab('manual')" id="tab-manual">
+                Ingreso Manual
+            </button>
+            <button type="button" class="tab-button" onclick="mostrarTab('excel')" id="tab-excel">
+                Carga desde Excel
+            </button>
+        </div>
+
+        <!-- Tab de Ingreso Manual -->
+        <div id="tab-content-manual" class="tab-content active">
+            <form id="formGuardarEstado" onsubmit="guardarEstado(event)">
+                {% csrf_token %}
+                <input type="hidden" name="empresa_id" value="{{ empresa_seleccionada.pk }}">
+                <input type="hidden" name="año" value="{{ año_seleccionado }}">
+                <input type="hidden" name="tipo" value="{{ tipo_seleccionado }}">
+
+                <!-- Mostrar cuentas agrupadas por tipo -->
+                {% if cuentas_por_tipo %}
+                    {% for tipo_cuenta, cuentas in cuentas_por_tipo.items %}
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <h4 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 2px solid var(--color-border);">
+                            {{ tipo_cuenta }}
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                            {% for cuenta in cuentas %}
+                            <div style="display: grid; grid-template-columns: 100px 1fr 180px; gap: var(--spacing-md); align-items: center; padding: var(--spacing-sm); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); min-width: 0;">
+                                <div style="font-weight: var(--font-weight-medium); color: var(--color-text-primary); overflow: hidden; text-overflow: ellipsis;">
+                                    {{ cuenta.codigo }}
+                                </div>
+                                <div style="color: var(--color-text-primary); overflow: hidden; text-overflow: ellipsis; min-width: 0;">
+                                    {{ cuenta.nombre }}
+                                </div>
+                                <div style="min-width: 0;">
+                                    <input 
+                                        type="number" 
+                                        name="monto_{{ cuenta.id }}" 
+                                        id="monto_{{ cuenta.id }}" 
+                                        class="form-control monto-input" 
+                                        step="0.01" 
+                                        value="{{ cuenta.monto|floatformat:2 }}"
+                                        placeholder="0.00"
+                                        style="width: 100%; max-width: 100%; box-sizing: border-box;"
+                                    >
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 2px solid var(--color-border); display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                            <span>Guardar Estado Financiero</span>
+                        </button>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+                        <p>No hay cuentas disponibles para este tipo de estado financiero en el catálogo de la empresa.</p>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Tab de Carga desde Excel -->
+        <div id="tab-content-excel" class="tab-content" style="display: none;">
+            <div style="margin-bottom: var(--spacing-lg);">
+                <p style="margin-bottom: var(--spacing-md);">Descargue la plantilla Excel personalizada con el catálogo de cuentas de la empresa:</p>
+                <form method="get" action="{% url 'estados:descargar_plantilla' %}" style="display: inline-block;">
+                    <input type="hidden" name="empresa" value="{{ empresa_seleccionada.pk }}">
+                    <input type="hidden" name="tipo" value="{{ tipo_seleccionado }}">
+                    <button type="submit" class="btn btn-secondary">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Descargar Plantilla</span>
+                    </button>
+                </form>
+            </div>
+
+            <form method="post" action="{% url 'estados:cargar_excel' %}" enctype="multipart/form-data" id="formCargarExcel">
+                {% csrf_token %}
+                <input type="hidden" name="empresa_id" value="{{ empresa_seleccionada.pk }}">
+                <input type="hidden" name="año" value="{{ año_seleccionado }}">
+                <input type="hidden" name="tipo" value="{{ tipo_seleccionado }}">
+                
+                <div class="form-group">
+                    <label for="archivo" class="form-label">Archivo Excel</label>
+                    <input type="file" name="archivo" id="archivo" class="form-control" accept=".xlsx,.xls" required>
+                    <small style="color: var(--color-text-secondary); margin-top: var(--spacing-xs); display: block;">
+                        Seleccione un archivo Excel (.xlsx o .xls) con los datos del estado financiero
+                    </small>
+                </div>
+
+                <div style="margin-top: var(--spacing-lg); display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        <span>Cargar Archivo</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% elif empresa_seleccionada and not catalogo %}
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-content">
+        <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
+            <p>La empresa "{{ empresa_seleccionada.nombre }}" no tiene un catálogo de cuentas configurado. Por favor, configure el catálogo primero.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Sección de Estados Financieros Guardados (siempre visible) -->
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Estados Financieros Guardados</h3>
+        <p class="form-card-subtitle">Lista de todos los estados financieros registrados</p>
+    </div>
+    <div class="form-card-content">
+        {% if estados_guardados %}
+        <div style="overflow-x: auto;">
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: var(--color-background);">
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: left; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Empresa</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: left; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Tipo de Estado</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: center; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Año</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: center; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Cuentas</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: center; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Fecha</th>
+                        <th style="padding: var(--spacing-sm) var(--spacing-md); text-align: center; font-weight: var(--font-weight-semibold); border-bottom: 2px solid var(--color-border);">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estado in estados_guardados %}
+                    <tr style="border-bottom: 1px solid var(--color-border);">
+                        <td style="padding: var(--spacing-sm) var(--spacing-md);">{{ estado.empresa.nombre }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md);">{{ estado.get_tipo_display }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md); text-align: center;">{{ estado.año }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md); text-align: center;">{{ estado.cantidad_cuentas }} cuentas registradas</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md); text-align: center;">{{ estado.creado_en|date:"d/m/Y" }}</td>
+                        <td style="padding: var(--spacing-sm) var(--spacing-md); text-align: center;">
+                            <div style="display: flex; gap: var(--spacing-xs); justify-content: center;">
+                                <a href="{% url 'estados:editar_estado' estado.id %}" class="btn btn-secondary" style="padding: var(--spacing-xs) var(--spacing-sm); min-width: auto;" title="Editar">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </a>
+                                <button type="button" class="btn btn-danger" style="padding: var(--spacing-xs) var(--spacing-sm); min-width: auto;" onclick="confirmarEliminacion({{ estado.id }}, '{{ estado.get_tipo_display }}', {{ estado.año }})" title="Eliminar">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+            <svg style="width: 64px; height: 64px; margin: 0 auto var(--spacing-md); opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p style="font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); margin-bottom: var(--spacing-xs);">No hay estados financieros guardados</p>
+            <p style="font-size: var(--font-size-sm);">Seleccione una empresa, año y tipo de estado para comenzar</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+{% include 'componentes/modal_confirmacion.html' %}
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: var(--spacing-lg);
+}
+
+.tab-button {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    transition: all 0.2s;
+}
+
+.tab-button:hover {
+    color: var(--color-text-primary);
+}
+
+.tab-button.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.form-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.monto-input {
+    text-align: right;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function actualizarFormulario() {
+    document.getElementById('formSeleccionarEstado').submit();
+}
+
+function mostrarTab(tab) {
+    // Ocultar todos los tabs
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+        content.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Mostrar el tab seleccionado
+    if (tab === 'manual') {
+        document.getElementById('tab-content-manual').classList.add('active');
+        document.getElementById('tab-content-manual').style.display = 'block';
+        document.getElementById('tab-manual').classList.add('active');
+    } else if (tab === 'excel') {
+        document.getElementById('tab-content-excel').classList.add('active');
+        document.getElementById('tab-content-excel').style.display = 'block';
+        document.getElementById('tab-excel').classList.add('active');
+    }
+}
+
+function guardarEstado(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    fetch('{% url "estados:guardar_estado" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recargar la página para mostrar el estado guardado
+            location.reload();
+        } else {
+            alert('Error al guardar el estado financiero: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al guardar el estado financiero');
+    });
+}
+
+function confirmarEliminacion(estadoId, tipoEstado, año) {
+    const modal = document.getElementById('modalConfirmacion');
+    const mensaje = document.getElementById('modalMensaje');
+    const btnConfirmar = document.getElementById('modalConfirmar');
+    const btnCancelar = document.getElementById('modalCancelar');
+    
+    mensaje.textContent = `¿Está seguro de que desea eliminar el ${tipoEstado} del año ${año}?`;
+    modal.style.display = 'flex';
+    
+    // Limpiar listeners anteriores
+    const nuevoConfirmar = btnConfirmar.cloneNode(true);
+    btnConfirmar.parentNode.replaceChild(nuevoConfirmar, btnConfirmar);
+    const nuevoCancelar = btnCancelar.cloneNode(true);
+    btnCancelar.parentNode.replaceChild(nuevoCancelar, btnCancelar);
+    
+    // Agregar listeners
+    nuevoConfirmar.addEventListener('click', function() {
+        eliminarEstado(estadoId);
+    });
+    
+    nuevoCancelar.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // Cerrar al hacer clic fuera del modal
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function eliminarEstado(estadoId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "estados:eliminar_estado" 0 %}'.replace('0', estadoId);
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = csrfToken;
+    form.appendChild(csrfInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}
+

@@ -34,6 +34,8 @@ def generar_plantilla_excel():
         ['0301', 'Capital social', 'PATRIMONIO'],
         ['0401', 'Ingresos operativos', 'INGRESO'],
         ['0501', 'Gastos operativos', 'GASTO'],
+        ['0601', 'Ganancias', 'RESULTADO'],
+
     ]
     
     for row_num, ejemplo in enumerate(ejemplos, 2):

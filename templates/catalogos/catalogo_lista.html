@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load catalogos_extras %}
 
 {% block title %}Catálogos Contables - Sistema de Análisis Financiero{% endblock %}
 
@@ -153,6 +154,72 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Sección de Mapeo de Cuentas para Ratios Financieros -->
+{% if empresa_seleccionada and ratios_por_categoria %}
+<div class="card" style="margin-top: var(--spacing-xl);">
+    <div class="form-card-header">
+        <h3 class="form-card-title">Mapeo de Cuentas para Ratios Financieros</h3>
+        <p class="form-card-subtitle">Asigne los códigos de cuenta que se usarán para calcular los ratios financieros</p>
+    </div>
+    <div class="form-card-content">
+        <form method="post" action="{% url 'catalogos:guardar_mapeos' %}" id="formMapeosRatios">
+            {% csrf_token %}
+            <input type="hidden" name="empresa_id" value="{{ empresa_seleccionada.pk }}">
+            
+            {% for categoria, ratios in ratios_por_categoria.items %}
+            <div style="margin-bottom: var(--spacing-xl);">
+                <h4 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-lg);">Ratios de {{ categoria }}</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                    {% for ratio in ratios %}
+                    <div style="padding: var(--spacing-lg); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+                        <h5 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-md);">{{ ratio.nombre }}</h5>
+                        
+                        <!-- Fórmula en píldora gris -->
+                        <div style="display: inline-block; padding: var(--spacing-xs) var(--spacing-md); background-color: var(--color-background); border-radius: 20px; margin-bottom: var(--spacing-lg);">
+                            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">{{ ratio.formula_display }}</span>
+                        </div>
+                        
+                        <!-- Campos de mapeo para cada componente -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-md);">
+                            {% for componente in ratio.componentes.all %}
+                            <div class="form-group">
+                                <label for="mapeo_{{ componente.id }}" class="form-label">{{ componente.nombre_componente }}</label>
+                                <select name="mapeo_{{ componente.id }}" id="mapeo_{{ componente.id }}" class="form-control">
+                                    <option value="">-- Seleccione --</option>
+                                    {% if cuentas %}
+                                    {% for cuenta in cuentas %}
+                                    <option value="{{ cuenta.id }}" {% if mapeos_existentes|get_item_int:componente.id == cuenta.id %}selected{% endif %}>
+                                        {{ cuenta.codigo }} - {{ cuenta.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option value="" disabled>No hay cuentas disponibles. Agregue cuentas primero.</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Botón Guardar Mapeo al final -->
+            <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                    </svg>
+                    <span>Guardar Mapeo</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
 {% endif %}
 {% endblock %}
 

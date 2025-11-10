@@ -29,7 +29,9 @@ SECRET_KEY = 'django-insecure-y3+!@na3tlpkmof9*(j2$03-!msle538g(s2!@^v_a253li+jn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.devtunnels.ms']
+CSRF_TRUSTED_ORIGINS = ['https://*.devtunnels.ms']
+
 
 
 # Application definition
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     'apps.usuarios',
     'apps.empresas',
     'apps.catalogos',
+    'apps.parametros',
     'apps.estados',
     'apps.analisis',
     'apps.proyecciones',
@@ -85,6 +88,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
 
 DATABASES = {
     'default': {
