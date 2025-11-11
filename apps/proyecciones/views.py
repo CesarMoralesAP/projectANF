@@ -8,7 +8,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
 from apps.empresas.models import Empresa
-from .models import ProyeccionVenta
+from .models import ProyeccionVenta, Ventas
 
 
 class ProyeccionVentasView(LoginRequiredMixin, TemplateView):
@@ -56,6 +56,25 @@ class GenerarProyeccionView(LoginRequiredMixin, View):
             # Convertir a tipos correctos
             df['Valor'] = pd.to_numeric(df['Valor'], errors='coerce')
             df = df.dropna(subset=['Valor'])
+
+            # ==========================
+            # GUARDAR DATOS HISTÓRICOS EN BD
+            # ==========================
+            # Eliminar todos los datos históricos de ventas de esta empresa
+            Ventas.objects.filter(empresa=empresa).delete()
+            
+            # Guardar los nuevos datos
+            for _, row in df.iterrows():
+                anio = int(row['Año'])
+                mes = int(row['Mes'])
+                valor = round(float(row['Valor']), 2)
+                
+                Ventas.objects.create(
+                    empresa=empresa,
+                    anio=anio,
+                    mes=mes,
+                    valor=valor
+                )
 
             # Datos históricos
             valores_hist = df['Valor'].tolist()
