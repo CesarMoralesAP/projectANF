@@ -1,0 +1,173 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load permisos_tags %}
+
+{% block title %}Historial de Ratios - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Historial de Análisis de Ratios</h2>
+        <p>Todos los análisis de ratios guardados en el sistema</p>
+    </div>
+    <a href="{% url 'graficas:graficos_lista' %}" class="btn btn-primary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Nuevo Análisis</span>
+    </a>
+</div>
+
+{% if analisis_ratios %}
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-content" style="padding: 0;">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                        <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Nombre</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Empresa</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Sector</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Fecha</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Ratios</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for analisis in analisis_ratios %}
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 1rem;">
+                            <div style="font-weight: 500; color: #111827;">{{ analisis.nombre }}</div>
+                            {% if analisis.descripcion %}
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+                                {{ analisis.descripcion|truncatewords:10 }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 1rem; color: #374151;">{{ analisis.empresa.nombre }}</td>
+                        <td style="padding: 1rem; color: #6b7280;">{{ analisis.empresa.sector.nombre }}</td>
+                        <td style="padding: 1rem; color: #6b7280; white-space: nowrap;">
+                            {{ analisis.creado_en|date:"d/m/Y H:i" }}
+                        </td>
+                        <td style="padding: 1rem;">
+                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #eff6ff; color: #1e40af; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+                                📊 6 Ratios
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                                <!-- Botón Ver Gráfico -->
+                                <a href="{% url 'graficas:ver_ratios' analisis.pk %}" 
+                                   class="btn btn-primary"
+                                   style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                    📈 Ver Gráfico
+                                </a>
+                                
+                                <!-- Botón Eliminar (solo para administradores) -->
+                                {% if request.user|es_administrador %}
+                                <button onclick="confirmarEliminacion('{{ analisis.nombre }}', '{% url 'graficas:eliminar_ratio' analisis.pk %}')"
+                                        class="btn btn-danger"
+                                        style="font-size: 0.875rem; padding: 0.5rem 1rem;"
+                                        title="Eliminar análisis">
+                                    🗑️ Eliminar
+                                </button>
+                                {% else %}
+                                <button class="btn btn-secondary"
+                                        style="font-size: 0.875rem; padding: 0.5rem 1rem; opacity: 0.5; cursor: not-allowed;"
+                                        title="Solo administradores pueden eliminar"
+                                        disabled>
+                                    🔒 Eliminar
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Paginación -->
+{% if is_paginated %}
+<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+    {% if page_obj.has_previous %}
+        <a href="?page=1" class="btn btn-secondary">Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 0.5rem 1rem; background: #f9fafb; border-radius: 6px; color: #374151;">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span>
+    
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="info-note" style="margin-top: 2rem; text-align: center;">
+    <p style="font-size: 1.125rem; margin-bottom: 1rem;">📊 No hay análisis de ratios guardados</p>
+    <p>Crea tu primer análisis desde el menú "Proyección de Ventas"</p>
+    <a href="{% url 'graficas:graficos_lista' %}" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">
+        Crear Análisis
+    </a>
+</div>
+{% endif %}
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>💡 Información:</strong>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li>Los análisis se guardan automáticamente al generarse</li>
+        <li>Puedes ver el gráfico en cualquier momento</li>
+        <li>Cada análisis muestra 6 ratios financieros clave</li>
+        <li>Solo administradores pueden eliminar análisis</li>
+    </ul>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div id="modalEliminar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
+        <h3 style="margin: 0 0 1rem 0; color: #dc2626;">⚠️ Confirmar Eliminación</h3>
+        <p style="margin-bottom: 1.5rem; color: #374151;">
+            ¿Está seguro que desea eliminar el análisis <strong id="nombreAnalisis"></strong>?
+        </p>
+        <p style="color: #dc2626; font-size: 0.875rem; margin-bottom: 1.5rem;">
+            Esta acción no se puede deshacer.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button onclick="cerrarModalEliminar()" class="btn btn-secondary">
+                Cancelar
+            </button>
+            <form id="formEliminar" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarEliminacion(nombre, url) {
+    document.getElementById('nombreAnalisis').textContent = nombre;
+    document.getElementById('formEliminar').action = url;
+    document.getElementById('modalEliminar').style.display = 'flex';
+}
+
+function cerrarModalEliminar() {
+    document.getElementById('modalEliminar').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera de él
+document.getElementById('modalEliminar').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModalEliminar();
+    }
+});
+</script>
+{% endblock %}

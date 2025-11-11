@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'apps.empresas',
     'apps.catalogos',
     'apps.estados',
-    'apps.analisis',
+    'apps.graficos_financieros',  # Renombrado de 'analisis'
     'apps.proyecciones',
     'apps.graficas',
 ]
