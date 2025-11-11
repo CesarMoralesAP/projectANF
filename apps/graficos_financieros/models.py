@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from apps.core.models import ModeloBase
 from apps.empresas.models import Empresa
 
@@ -20,7 +19,7 @@ class ProyeccionFinanciera(ModeloBase):
     empresa = models.ForeignKey(
         Empresa,
         on_delete=models.CASCADE,
-        related_name='proyecciones',
+        related_name='proyecciones_financieras',
         verbose_name='Empresa'
     )
     nombre = models.CharField(
@@ -114,132 +113,6 @@ class ProyeccionVenta(ModeloBase):
     
     def __str__(self):
         return f'{self.empresa.nombre} - {self.año}/{self.mes:02d} - {self.metodo}'
-
-
-class RatioFinanciero(ModeloBase):
-    """
-    Catálogo de ratios financieros disponibles.
-    Tabla: ratio_financiero
-    """
-    nombre = models.CharField(
-        max_length=200,
-        verbose_name='Nombre del Ratio',
-        help_text='Ejemplo: Razón Corriente, Prueba Ácida'
-    )
-    formula_display = models.CharField(
-        max_length=500,
-        verbose_name='Fórmula',
-        help_text='Ejemplo: Activo Corriente / Pasivo Corriente'
-    )
-    categoria = models.CharField(
-        max_length=100,
-        verbose_name='Categoría',
-        help_text='Ejemplo: Liquidez, Endeudamiento, Rentabilidad'
-    )
-    promedio_general = models.DecimalField(
-        max_digits=10,
-        decimal_places=4,
-        null=True,
-        blank=True,
-        verbose_name='Promedio General'
-    )
-    
-    class Meta:
-        db_table = 'ratio_financiero'
-        verbose_name = 'Ratio Financiero'
-        verbose_name_plural = 'Ratios Financieros'
-        ordering = ['categoria', 'nombre']
-    
-    def __str__(self):
-        return f'{self.nombre} ({self.categoria})'
-
-
-class ValorRatioCalculado(ModeloBase):
-    """
-    Valores calculados de ratios financieros por año y empresa.
-    Tabla: valor_ratio_calculado
-    """
-    empresa = models.ForeignKey(
-        Empresa,
-        on_delete=models.CASCADE,
-        related_name='valores_ratios',
-        verbose_name='Empresa'
-    )
-    ratio = models.ForeignKey(
-        RatioFinanciero,
-        on_delete=models.CASCADE,
-        related_name='valores',
-        verbose_name='Ratio'
-    )
-    usuario_calculo = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='Usuario que calculó'
-    )
-    
-    año = models.IntegerField(
-        verbose_name='Año',
-        help_text='Año del cálculo (Ej: 2022, 2023, 2024)'
-    )
-    valor_calculado = models.DecimalField(
-        max_digits=15,
-        decimal_places=4,
-        verbose_name='Valor Calculado'
-    )
-    
-    # Campos de comparación
-    parametro_sectorial = models.DecimalField(
-        max_digits=10,
-        decimal_places=4,
-        null=True,
-        blank=True,
-        verbose_name='Parámetro Sectorial'
-    )
-    promedio_sector = models.DecimalField(
-        max_digits=10,
-        decimal_places=4,
-        null=True,
-        blank=True,
-        verbose_name='Promedio del Sector'
-    )
-    promedio_general = models.DecimalField(
-        max_digits=10,
-        decimal_places=4,
-        null=True,
-        blank=True,
-        verbose_name='Promedio General'
-    )
-    
-    # Flags de superación
-    superior_parametro_sectorial = models.BooleanField(
-        default=False,
-        verbose_name='Supera Parámetro Sectorial'
-    )
-    superior_promedio_sector = models.BooleanField(
-        default=False,
-        verbose_name='Supera Promedio del Sector'
-    )
-    superior_promedio_general = models.BooleanField(
-        default=False,
-        verbose_name='Supera Promedio General'
-    )
-    
-    fecha_calculo = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Fecha de Cálculo'
-    )
-    
-    class Meta:
-        db_table = 'valor_ratio_calculado'
-        verbose_name = 'Valor de Ratio Calculado'
-        verbose_name_plural = 'Valores de Ratios Calculados'
-        ordering = ['empresa', 'ratio', '-año']
-        unique_together = [['empresa', 'ratio', 'año']]
-    
-    def __str__(self):
-        return f'{self.empresa.nombre} - {self.ratio.nombre} ({self.año}): {self.valor_calculado}'
 
 
 class AnalisisRatio(ModeloBase):

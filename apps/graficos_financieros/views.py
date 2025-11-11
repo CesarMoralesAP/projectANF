@@ -6,7 +6,9 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from apps.empresas.models import Empresa
 from apps.core.mixins import PermisoEliminarMixin
-from .models import ProyeccionFinanciera, OrigenDatos, RatioFinanciero, ValorRatioCalculado, AnalisisRatio
+from .models import ProyeccionFinanciera, OrigenDatos, AnalisisRatio
+from apps.catalogos.models import RatioFinanciero
+from apps.analisis.models import ValorRatioCalculado
 from .forms import SubirProyeccionForm
 from .utils import procesar_excel_proyeccion, validar_estructura_excel
 import os

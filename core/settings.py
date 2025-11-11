@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'apps.catalogos',
     'apps.parametros',
     'apps.estados',
-    'apps.graficos_financieros',  # Renombrado de 'analisis'
+    'apps.analisis',  # Análisis financiero de Raul
+    'apps.graficos_financieros',  # Gráficos financieros (proyecciones y ratios)
     'apps.proyecciones',
     'apps.graficas',
 ]
