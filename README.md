@@ -173,3 +173,54 @@ O puedes crear datos de prueba iniciales con los comandos:
 python manage.py crear_usuarios_demo
 python manage.py crear_datos_demo
 ```
+
+## Configuración Inicial del Proyecto
+
+Si estás configurando el proyecto desde cero (sin un backup de base de datos), sigue estos pasos para inicializar la estructura de la base de datos y poblarla con datos de prueba.
+
+### 1. Crear las Migraciones
+
+Primero, asegúrate de que tu entorno virtual esté activado y que hayas configurado correctamente el archivo `.env` con las credenciales de tu base de datos MySQL.
+
+```powershell
+# Asegúrate de que el entorno virtual esté activado
+venv\Scripts\Activate.ps1
+```
+
+Luego, crea todas las migraciones necesarias para las apps del proyecto:
+
+```bash
+# Crear las migraciones para todas las apps
+python manage.py makemigrations
+```
+
+### 2. Aplicar las Migraciones
+
+Aplica las migraciones para crear todas las tablas en la base de datos:
+
+```bash
+# Aplicar todas las migraciones
+python manage.py migrate
+```
+
+Este comando creará todas las tablas necesarias según los modelos definidos en las apps: `empresas`, `catalogos`, `estados`, `parametros`, `analisis`, `graficas`, `proyecciones` y `usuarios`.
+
+### 3. Crear Datos de Prueba
+
+Una vez que la estructura de la base de datos esté lista, tienes varias opciones para poblarla con datos de ejemplo:
+
+#### Opción A: Crear Datos Completos Automáticamente (Recomendado)
+
+Este comando maestro ejecuta todos los subcomandos necesarios para crear un sistema completamente funcional con 2 bancos de ejemplo:
+
+```bash
+# Comando maestro que crea TODO (usuarios, sectores, empresas, ratios, catálogos, estados, mapeos)
+python manage.py crear_todos_los_bancos_demo
+```
+
+Este comando creará:
+- ✅ Usuarios de prueba (admin y usuario regular)
+- ✅ Sectores económicos y empresas
+- ✅ 6 Ratios financieros predefinidos (Liquidez, Endeudamiento, Rentabilidad)
+- ✅ **Banco Agrícola**: Catálogo completo, 6 estados financieros (2022-2024), mapeos de ratios
+- ✅ **Banco Atlántida**: Catálogo completo, 6 estados financieros (2022-2024), mapeos de ratios
