@@ -1,0 +1,68 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Informes y Análisis - Sistema de Análisis Financiero{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Proyección de Ventas y Ratios</h2>
+        <p>Seleccione una empresa para análisis financiero</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'graficas:historial_proyecciones' %}" class="btn btn-secondary">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            <span>Historial Proyecciones</span>
+        </a>
+        <a href="{% url 'graficas:historial_ratios' %}" class="btn btn-secondary">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span>Historial Ratios</span>
+        </a>
+    </div>
+</div>
+
+<div class="empresas-grid">
+    {% for empresa in empresas %}
+    <div class="empresa-card card">
+        <div class="card-icon empresa-card-icon">
+            <div class="card-icon-inner"></div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">{{ empresa.nombre }}</h3>
+            <p class="card-subtitle">Sector: {{ empresa.sector.nombre }}</p>
+            <p class="card-meta">Creada: {{ empresa.creado_en|date:"d/m/Y" }}</p>
+            
+            <!-- Botones de acción -->
+            <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="{% url 'graficas:proyeccion_metodos' empresa.pk %}" 
+                   class="btn btn-primary" 
+                   style="width: 100%;">
+                    📊 Gráfico x 3 Métodos
+                </a>
+                <a href="{% url 'graficas:ratios_empresa' empresa.pk %}" 
+                   class="btn btn-secondary" 
+                   style="width: 100%;">
+                    📈 Ratios Financieros
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="info-note" style="grid-column: 1 / -1;">
+        <p>No hay empresas registradas en el sistema.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>📈 Opciones de Análisis:</strong>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li><strong>Gráfico x 3 Métodos:</strong> Proyecciones financieras (Valor Incremental, Valor Absoluto, Mínimos Cuadrados)</li>
+        <li><strong>Ratios Financieros:</strong> Análisis de 6 ratios clave en evolución temporal (Razón Corriente, Prueba Ácida, ROE, ROA, Endeudamiento, Cobertura)</li>
+    </ul>
+</div>
+{% endblock %}

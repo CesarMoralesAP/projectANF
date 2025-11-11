@@ -1,0 +1,320 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Gráfico de Proyección - {{ proyeccion.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .grafico-container {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        margin-top: 2rem;
+    }
+    .grafico-canvas {
+        max-height: 500px;
+    }
+    .metodo-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+    .metodo-incremental {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    .metodo-absoluto {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .metodo-minimos {
+        background: #fef3c7;
+        color: #92400e;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>{{ proyeccion.nombre }}</h2>
+        <p>{{ empresa.nombre }} - Gráfico de Proyección</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+        {% if proyeccion.archivo %}
+        <a href="{{ proyeccion.archivo.url }}" download class="btn btn-secondary">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Descargar Excel</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Información de la proyección -->
+<div class="card">
+    <div class="card-content">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <span class="metodo-badge metodo-incremental">📈 Valor Incremental</span>
+            <span class="metodo-badge metodo-absoluto">📊 Valor Absoluto</span>
+            <span class="metodo-badge metodo-minimos">📐 Mínimos Cuadrados</span>
+            <span style="color: #6b7280; font-size: 0.875rem;">
+                Creado: {{ proyeccion.creado_en|date:"d/m/Y H:i" }}
+            </span>
+        </div>
+        {% if proyeccion.descripcion %}
+        <p style="margin-top: 1rem; color: #4b5563;">{{ proyeccion.descripcion }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Gráfico -->
+<div class="grafico-container">
+    <canvas id="graficoProyeccion" class="grafico-canvas"></canvas>
+</div>
+
+<!-- Tabla de datos (opcional) -->
+<div class="card" style="margin-top: 2rem;">
+    <div class="card-content">
+        <h3 style="margin: 0 0 1rem 0; font-size: 1.125rem; font-weight: 600; color: #111827;">
+            📋 Datos de la Proyección
+        </h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                <thead>
+                    <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                        <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: #374151;">Periodo</th>
+                        <th style="padding: 0.75rem; text-align: right; font-weight: 600; color: #1e40af;">Valor Incremental</th>
+                        <th style="padding: 0.75rem; text-align: right; font-weight: 600; color: #065f46;">Valor Absoluto</th>
+                        <th style="padding: 0.75rem; text-align: right; font-weight: 600; color: #92400e;">Mínimos Cuadrados</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaDatos">
+                    <!-- Se llenará con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="form-actions" style="margin-top: 2rem;">
+    <a href="{% url 'graficas:proyeccion_metodos' empresa.pk %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span>Volver</span>
+    </a>
+    <a href="{% url 'empresas:empresa_lista' %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        <span>Ir a Empresas</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js desde CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+{{ datos_grafico|json_script:"datosGrafico" }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Datos del gráfico desde Django
+    const datosGrafico = JSON.parse(document.getElementById('datosGrafico').textContent);
+    
+    console.log('Datos recibidos:', datosGrafico);
+    
+    // Validar que los datos existan
+    if (!datosGrafico || !datosGrafico.valor_incremental || !datosGrafico.valor_absoluto) {
+        console.error('Error: Datos de gráfico no válidos');
+        return;
+    }
+    
+    // Obtener datos de cada método
+    const valorIncremental = datosGrafico.valor_incremental;
+    const valorAbsoluto = datosGrafico.valor_absoluto;
+    const minimosCuadrados = datosGrafico.minimos_cuadrados;
+    
+    // Preparar datasets
+    const datasets = [
+        {
+            label: 'Valor Incremental',
+            data: valorIncremental.valores,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6,
+        },
+        {
+            label: 'Valor Absoluto',
+            data: valorAbsoluto.valores,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6,
+        }
+    ];
+    
+    // Agregar Mínimos Cuadrados si existe
+    if (minimosCuadrados && minimosCuadrados.valores) {
+        datasets.push({
+            label: 'Mínimos Cuadrados',
+            data: minimosCuadrados.valores,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#f59e0b',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6,
+        });
+    }
+    
+    // Crear gráfico
+    const ctx = document.getElementById('graficoProyeccion').getContext('2d');
+    
+    const grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: valorIncremental.periodos, // Usar periodos del primer método
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: '{{ proyeccion.nombre }}',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: 20
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 13
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('es-SV', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return new Intl.NumberFormat('es-SV', {
+                                notation: 'compact',
+                                compactDisplay: 'short'
+                            }).format(value);
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            }
+        }
+    });
+    
+    // Llenar tabla de datos
+    const tablaDatos = document.getElementById('tablaDatos');
+    const maxRegistros = Math.min(
+        valorIncremental.periodos.length, 
+        valorAbsoluto.periodos.length,
+        minimosCuadrados && minimosCuadrados.periodos ? minimosCuadrados.periodos.length : Infinity
+    );
+    
+    for (let i = 0; i < maxRegistros; i++) {
+        const fila = document.createElement('tr');
+        fila.style.borderBottom = '1px solid #e5e7eb';
+        
+        // Valor de Mínimos Cuadrados (puede ser null)
+        const valorMinimos = minimosCuadrados && minimosCuadrados.valores && minimosCuadrados.valores[i] 
+            ? new Intl.NumberFormat('es-SV', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(minimosCuadrados.valores[i])
+            : '-';
+        
+        fila.innerHTML = `
+            <td style="padding: 0.75rem; color: #374151;">${valorIncremental.periodos[i]}</td>
+            <td style="padding: 0.75rem; text-align: right; color: #1e40af; font-weight: 500;">
+                ${new Intl.NumberFormat('es-SV', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(valorIncremental.valores[i])}
+            </td>
+            <td style="padding: 0.75rem; text-align: right; color: #065f46; font-weight: 500;">
+                ${new Intl.NumberFormat('es-SV', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(valorAbsoluto.valores[i])}
+            </td>
+            <td style="padding: 0.75rem; text-align: right; color: #92400e; font-weight: 500;">
+                ${valorMinimos}
+            </td>
+        `;
+        
+        tablaDatos.appendChild(fila);
+    }
+});
+</script>
+{% endblock %}

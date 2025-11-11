@@ -1,0 +1,346 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Gráfico de Ratios - {{ analisis.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .grafico-container {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        margin-top: 2rem;
+    }
+    .grafico-canvas {
+        max-height: 600px;
+    }
+    .ratio-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0.25rem;
+    }
+    .legend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>{{ analisis.nombre }}</h2>
+        <p>{{ empresa.nombre }} - Análisis de Ratios Financieros</p>
+    </div>
+</div>
+
+<!-- Información del análisis -->
+<div class="card">
+    <div class="card-content">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: space-between;">
+            <div>
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.125rem; font-weight: 600; color: #111827;">
+                    Ratios Incluidos
+                </h3>
+                <div class="legend-grid">
+                    <span class="ratio-badge" style="background: #dbeafe; color: #1e40af;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #3b82f6; border-radius: 50%;"></span>
+                        Razón Corriente
+                    </span>
+                    <span class="ratio-badge" style="background: #d1fae5; color: #065f46;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #10b981; border-radius: 50%;"></span>
+                        Prueba Ácida
+                    </span>
+                    <span class="ratio-badge" style="background: #fef3c7; color: #92400e;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #f59e0b; border-radius: 50%;"></span>
+                        Ratio Endeudamiento
+                    </span>
+                    <span class="ratio-badge" style="background: #fee2e2; color: #7c2d12;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #ef4444; border-radius: 50%;"></span>
+                        Cobertura Intereses
+                    </span>
+                    <span class="ratio-badge" style="background: #f3e8ff; color: #581c87;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #a855f7; border-radius: 50%;"></span>
+                        ROE
+                    </span>
+                    <span class="ratio-badge" style="background: #fce7f3; color: #831843;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background: #ec4899; border-radius: 50%;"></span>
+                        ROA
+                    </span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="color: #6b7280; font-size: 0.875rem;">
+                    Creado: {{ analisis.creado_en|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+        </div>
+        {% if analisis.descripcion %}
+        <p style="margin-top: 1rem; color: #4b5563; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+            {{ analisis.descripcion }}
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Gráfico -->
+<div class="grafico-container">
+    <canvas id="graficoRatios" class="grafico-canvas"></canvas>
+</div>
+
+<!-- Tabla resumen de datos -->
+<div class="card" style="margin-top: 2rem;">
+    <div class="card-content">
+        <h3 style="margin: 0 0 1rem 0; font-size: 1.125rem; font-weight: 600; color: #111827;">
+            📋 Resumen de Ratios por Año
+        </h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                <thead>
+                    <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                        <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: #374151;">Ratio</th>
+                        <th id="headerAnios" style="padding: 0.75rem; text-align: center; font-weight: 600; color: #374151;" colspan="3">
+                            <!-- Se llenará con JavaScript -->
+                        </th>
+                    </tr>
+                    <tr id="headerAniosDetalle" style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <th></th>
+                        <!-- Se llenará con JavaScript -->
+                    </tr>
+                </thead>
+                <tbody id="tablaDatosRatios">
+                    <!-- Se llenará con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="form-actions" style="margin-top: 2rem;">
+    <a href="{% url 'graficas:historial_ratios' %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span>Volver al Historial</span>
+    </a>
+    <a href="{% url 'empresas:empresa_lista' %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        <span>Ir a Empresas</span>
+    </a>
+</div>
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>📊 Interpretación de Ratios:</strong>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li><strong>Razón Corriente:</strong> Mide la capacidad de pago de deudas a corto plazo (ideal > 1.5)</li>
+        <li><strong>Prueba Ácida:</strong> Similar a razón corriente, excluyendo inventario (ideal > 1.0)</li>
+        <li><strong>Ratio de Endeudamiento:</strong> Proporción de deuda sobre activos totales (< 0.5 es saludable)</li>
+        <li><strong>Cobertura de Intereses:</strong> Capacidad de pagar intereses con utilidades (ideal > 3.0)</li>
+        <li><strong>ROE:</strong> Rentabilidad sobre el patrimonio (mayor es mejor)</li>
+        <li><strong>ROA:</strong> Rentabilidad sobre los activos totales (mayor es mejor)</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js desde CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+{{ datos_grafico|json_script:"datosGrafico" }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Datos del gráfico desde Django
+    const datosGrafico = JSON.parse(document.getElementById('datosGrafico').textContent);
+    
+    console.log('Datos de ratios recibidos:', datosGrafico);
+    
+    // Validar que los datos existan
+    if (!datosGrafico || !datosGrafico.años || !datosGrafico.ratios || !datosGrafico.datos) {
+        console.error('Error: Datos de ratios no válidos');
+        return;
+    }
+    
+    const años = datosGrafico.años;
+    const ratios = datosGrafico.ratios;
+    const datos = datosGrafico.datos;
+    
+    // Configuración de colores para cada ratio
+    const coloresRatios = {
+        'Razón Corriente': { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+        'Prueba Ácida': { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+        'Ratio de Endeudamiento': { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+        'Cobertura de Intereses': { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+        'ROE': { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.1)' },
+        'ROA': { border: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)' }
+    };
+    
+    // Preparar datasets para Chart.js
+    const datasets = ratios.map(ratio => {
+        const colores = coloresRatios[ratio] || { border: '#6b7280', bg: 'rgba(107, 114, 128, 0.1)' };
+        
+        return {
+            label: ratio,
+            data: datos[ratio] || [],
+            borderColor: colores.border,
+            backgroundColor: colores.bg,
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: colores.border,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 7,
+        };
+    });
+    
+    // Crear gráfico
+    const ctx = document.getElementById('graficoRatios').getContext('2d');
+    
+    const grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: años,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: '{{ analisis.nombre }} - Evolución de Ratios Financieros',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: 20
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('es-SV', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return new Intl.NumberFormat('es-SV', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }).format(value);
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            }
+        }
+    });
+    
+    // Llenar tabla resumen
+    const headerAniosDetalle = document.getElementById('headerAniosDetalle');
+    años.forEach(año => {
+        const th = document.createElement('th');
+        th.style.cssText = 'padding: 0.75rem; text-align: center; font-weight: 600; color: #374151;';
+        th.textContent = año;
+        headerAniosDetalle.appendChild(th);
+    });
+    
+    const tablaDatosRatios = document.getElementById('tablaDatosRatios');
+    
+    ratios.forEach(ratio => {
+        const fila = document.createElement('tr');
+        fila.style.borderBottom = '1px solid #e5e7eb';
+        
+        // Celda con nombre del ratio
+        const celdaNombre = document.createElement('td');
+        celdaNombre.style.cssText = 'padding: 0.75rem; color: #374151; font-weight: 500;';
+        celdaNombre.textContent = ratio;
+        fila.appendChild(celdaNombre);
+        
+        // Celdas con valores por año
+        const valoresRatio = datos[ratio] || [];
+        años.forEach((año, index) => {
+            const celda = document.createElement('td');
+            celda.style.cssText = 'padding: 0.75rem; text-align: center; color: #111827;';
+            
+            const valor = valoresRatio[index];
+            if (valor !== null && valor !== undefined) {
+                celda.textContent = new Intl.NumberFormat('es-SV', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(valor);
+            } else {
+                celda.textContent = '-';
+                celda.style.color = '#9ca3af';
+            }
+            
+            fila.appendChild(celda);
+        });
+        
+        tablaDatosRatios.appendChild(fila);
+    });
+});
+</script>
+{% endblock %}

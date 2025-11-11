@@ -17,9 +17,9 @@ urlpatterns = [
     path('catalogos/', include('apps.catalogos.urls')),
     path('parametros/', include('apps.parametros.urls')),
     path('estados/', include('apps.estados.urls')),
-    path('analisis/', include('apps.analisis.urls')),
+    path('analisis/', include('apps.analisis.urls')),  # Análisis financiero de Raul
     path('proyecciones/', include('apps.proyecciones.urls')),
-    # path('graficas/', include('apps.graficas.urls')),
+    path('graficos/', include('apps.graficas.urls')),  # Gráficos financieros (proyecciones y ratios)
 ]
 
 # Servir archivos estáticos y media en desarrollo

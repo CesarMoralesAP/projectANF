@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from .models import Empresa, Sector
 from .forms import EmpresaForm
+from apps.core.mixins import PermisoEliminarMixin
 
 
 class EmpresaListView(LoginRequiredMixin, ListView):
@@ -67,9 +68,10 @@ class EmpresaListView(LoginRequiredMixin, ListView):
         return super().get(request, *args, **kwargs)
 
 
-class EmpresaDeleteView(LoginRequiredMixin, DeleteView):
+class EmpresaDeleteView(PermisoEliminarMixin, LoginRequiredMixin, DeleteView):
     """
     Vista para eliminar una empresa.
+    Solo usuarios con permiso 'delete_empresa' pueden acceder.
     """
     model = Empresa
     success_url = reverse_lazy('empresas:empresa_lista')

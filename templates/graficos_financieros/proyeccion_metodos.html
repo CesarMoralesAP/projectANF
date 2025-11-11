@@ -1,0 +1,104 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Gráfico x 3 Métodos - {{ empresa.nombre }}{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Gráfico x 3 Métodos</h2>
+        <p>{{ empresa.nombre }} - Seleccione cómo desea generar la proyección</p>
+    </div>
+</div>
+
+<div class="metodos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    
+    <!-- Opción 1: Subir Excel -->
+    <div class="metodo-card card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" 
+         onclick="window.location.href='{% url 'graficas:subir_proyeccion' empresa.pk %}'">
+        <div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">📄 Subir Archivo Excel</h3>
+            <p class="card-subtitle">
+                Cargue un archivo Excel con los datos de proyección ya calculados.
+            </p>
+            <ul style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem; list-style: none; padding: 0;">
+                <li style="padding: 0.25rem 0;">✓ Valor Incremental</li>
+                <li style="padding: 0.25rem 0;">✓ Valor Absoluto</li>
+                <li style="padding: 0.25rem 0;">✓ Mínimos Cuadrados</li>
+            </ul>
+        </div>
+        <div class="card-actions" style="margin-top: 1.5rem;">
+            <a href="{% url 'graficas:subir_proyeccion' empresa.pk %}" class="btn btn-primary" style="width: 100%;">
+                Subir Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Opción 2: Calcular en la app -->
+    <div class="metodo-card card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+         onclick="window.location.href='{% url 'graficas:calcular_proyeccion' empresa.pk %}'">
+        <div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">🔢 Calcular en la Aplicación</h3>
+            <p class="card-subtitle">
+                El sistema calculará automáticamente las proyecciones usando datos históricos.
+            </p>
+            <ul style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem; list-style: none; padding: 0;">
+                <li style="padding: 0.25rem 0;">✓ Valor Incremental</li>
+                <li style="padding: 0.25rem 0;">✓ Valor Absoluto</li>
+                <li style="padding: 0.25rem 0;">✓ Mínimos Cuadrados</li>
+            </ul>
+        </div>
+        <div class="card-actions" style="margin-top: 1.5rem;">
+            <a href="{% url 'graficas:calcular_proyeccion' empresa.pk %}" class="btn btn-primary" style="width: 100%;">
+                Calcular Proyección
+            </a>
+        </div>
+        <div style="position: absolute; top: 1rem; right: 1rem; background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+            ⚙️ Preparado
+        </div>
+    </div>
+
+</div>
+
+<div class="form-actions" style="margin-top: 2rem;">
+    <a href="{% url 'empresas:empresa_lista' %}" class="btn btn-secondary">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span>Volver a Empresas</span>
+    </a>
+</div>
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>Nota:</strong> El archivo Excel debe contener tres hojas: "valor incremental", "valor absoluto" y "minimos cuadrados", 
+    cada una con las columnas "Mes" y "Venta".
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Efecto hover en las cards
+    document.querySelectorAll('.metodo-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+</script>
+{% endblock %}

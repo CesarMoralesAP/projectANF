@@ -1,0 +1,117 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Análisis de Ratios - {{ empresa.nombre }}{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>Análisis de Ratios Financieros</h2>
+        <p>{{ empresa.nombre }} - Generar análisis de ratios</p>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <div class="card-content">
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.25rem; font-weight: 600; color: #111827;">
+            📊 Ratios Disponibles
+        </h3>
+        
+        <div style="background: #f9fafb; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <p style="margin: 0 0 1rem 0; color: #374151; font-weight: 500;">
+                Este análisis generará un gráfico con la evolución de los siguientes ratios:
+            </p>
+            <ul style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none;">
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #1e40af; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></span>
+                    Razón Corriente
+                </li>
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #065f46; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                    Prueba Ácida
+                </li>
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></span>
+                    Ratio de Endeudamiento
+                </li>
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #7c2d12; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span>
+                    Cobertura de Intereses
+                </li>
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #581c87; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #a855f7; border-radius: 50%;"></span>
+                    ROE (Return on Equity)
+                </li>
+                <li style="display: flex; align-items: center; gap: 0.5rem; color: #831843; font-weight: 500;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #ec4899; border-radius: 50%;"></span>
+                    ROA (Return on Assets)
+                </li>
+            </ul>
+        </div>
+
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+            <p style="margin: 0; color: #1e40af; font-size: 0.875rem;">
+                <strong>ℹ️ Información:</strong> El sistema calculará automáticamente los ratios usando los datos 
+                históricos registrados en la base de datos para los años disponibles.
+            </p>
+        </div>
+
+        <!-- Formulario para generar análisis -->
+        <form method="post" style="margin-top: 2rem;">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label for="nombre" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">
+                    Nombre del Análisis <span style="color: #dc2626;">*</span>
+                </label>
+                <input type="text" 
+                       id="nombre" 
+                       name="nombre" 
+                       required
+                       placeholder="Ej: Análisis de Ratios 2024"
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem;">
+                <small style="color: #6b7280; font-size: 0.875rem;">
+                    Identifique este análisis con un nombre descriptivo
+                </small>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="descripcion" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">
+                    Descripción (Opcional)
+                </label>
+                <textarea id="descripcion" 
+                          name="descripcion" 
+                          rows="3"
+                          placeholder="Agregue notas o comentarios sobre este análisis..."
+                          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; resize: vertical;"></textarea>
+            </div>
+
+            <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                <a href="{% url 'empresas:empresa_lista' %}" class="btn btn-secondary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span>Cancelar</span>
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Generar Análisis</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>📌 Notas Importantes:</strong>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li>El análisis se generará usando los datos más recientes disponibles</li>
+        <li>Se mostrarán todos los años para los cuales existan datos calculados</li>
+        <li>El gráfico se guardará automáticamente y podrá consultarse posteriormente</li>
+        <li>Solo administradores pueden eliminar análisis guardados</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Calcular Proyección - {{ empresa.nombre }}{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="content-title">
+        <h2>🔢 Calcular Proyección Automática</h2>
+        <p>{{ empresa.nombre }} - Sector: {{ empresa.sector.nombre }}</p>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem; max-width: 800px;">
+    <div class="card-content">
+        <h3 style="margin: 0 0 1rem 0; color: #111827;">Proyección desde Datos del Sistema</h3>
+        
+        <div class="info-note" style="margin-bottom: 1.5rem;">
+            <strong>ℹ️ Cómo funciona:</strong>
+            <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+                <li>El sistema buscará los datos históricos de ventas de <strong>{{ empresa.nombre }}</strong></li>
+                <li>Extraerá los valores de las columnas <strong>Mes</strong> y <strong>Venta</strong></li>
+                <li>Calculará automáticamente las proyecciones usando 3 métodos matemáticos</li>
+                <li>Generará un gráfico interactivo con los resultados</li>
+            </ul>
+        </div>
+
+        <div class="warning-note" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+            <strong>⚠️ Importante:</strong>
+            <p style="margin: 0.5rem 0 0 0; color: #92400e;">
+                Esta funcionalidad requiere que existan datos históricos de ventas en el sistema.
+                Si no hay datos disponibles, use la opción de "Subir Archivo Excel".
+            </p>
+        </div>
+
+        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <h4 style="margin: 0 0 1rem 0; color: #374151; font-size: 1rem;">
+                📊 Métodos de Cálculo
+            </h4>
+            <div style="display: grid; gap: 1rem;">
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <div style="flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; margin-top: 0.5rem;"></div>
+                    <div>
+                        <strong style="color: #1e40af;">Valor Incremental</strong>
+                        <p style="margin: 0.25rem 0 0 0; color: #6b7280; font-size: 0.875rem;">
+                            Calcula la tendencia basada en incrementos constantes
+                        </p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <div style="flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #10b981; margin-top: 0.5rem;"></div>
+                    <div>
+                        <strong style="color: #065f46;">Valor Absoluto</strong>
+                        <p style="margin: 0.25rem 0 0 0; color: #6b7280; font-size: 0.875rem;">
+                            Proyecta usando valores absolutos de variación
+                        </p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <div style="flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; margin-top: 0.5rem;"></div>
+                    <div>
+                        <strong style="color: #92400e;">Mínimos Cuadrados</strong>
+                        <p style="margin: 0.25rem 0 0 0; color: #6b7280; font-size: 0.875rem;">
+                            Aplica regresión lineal para proyección óptima
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" style="margin-top: 2rem;">
+            {% csrf_token %}
+            
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #1e40af; font-size: 0.875rem;">
+                    <strong>📌 Origen de Datos:</strong><br>
+                    El sistema buscará en la tabla de ventas mensuales los registros asociados a 
+                    <strong>{{ empresa.nombre }}</strong> y extraerá los valores de las columnas 
+                    <strong>Mes</strong> y <strong>Venta</strong> para realizar los cálculos.
+                </p>
+            </div>
+
+            <div class="form-actions" style="display: flex; gap: 1rem; justify-content: space-between;">
+                <a href="{% url 'graficas:proyeccion_metodos' empresa.pk %}" class="btn btn-secondary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span>Cancelar</span>
+                </a>
+                
+                <button type="submit" class="btn btn-primary">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Calcular Proyección</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="info-note" style="margin-top: 2rem;">
+    <strong>💡 Nota Técnica:</strong>
+    <p style="margin: 0.5rem 0 0 0;">
+        Esta funcionalidad está preparada para trabajar con una tabla de ventas históricas que será 
+        definida posteriormente. La estructura esperada incluye:
+    </p>
+    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+        <li><strong>Campo Mes/Período:</strong> Fecha o nombre del período de venta</li>
+        <li><strong>Campo Venta/Valor:</strong> Monto de las ventas del período</li>
+        <li><strong>Relación con Empresa:</strong> Vinculación a la empresa correspondiente</li>
+    </ul>
+</div>
+{% endblock %}
