@@ -430,6 +430,47 @@
         stroke: #EF4444;
     }
 
+    /* Filas de categoría */
+    .categoria-header {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #4F46E5 100%);
+        border: none !important;
+    }
+
+    .categoria-header:hover {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #4F46E5 100%) !important;
+    }
+
+    .categoria-header td {
+        padding: var(--spacing-md) var(--spacing-lg) !important;
+    }
+
+    .categoria-titulo {
+        font-weight: var(--font-weight-bold);
+        color: white;
+        font-size: var(--font-size-base);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .categoria-nombre {
+        display: flex;
+        align-items: center;
+        color: white;
+    }
+
+    .categoria-nombre svg {
+        flex-shrink: 0;
+    }
+
+    /* Filas de ratios dentro de categorías */
+    .tabla-ratios tbody tr:not(.categoria-header) {
+        background: white;
+    }
+
+    .tabla-ratios tbody tr:not(.categoria-header):hover {
+        background: rgba(99, 102, 241, 0.03);
+    }
+
     /* Placeholder text */
     .placeholder-text {
         text-align: center;
@@ -445,6 +486,430 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    /* Estilos para Análisis Horizontal */
+    .tabla-horizontal {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--color-surface);
+        font-size: var(--font-size-sm);
+    }
+
+    .tabla-horizontal thead tr {
+        background: var(--color-background);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    .tabla-horizontal th {
+        padding: var(--spacing-md) var(--spacing-sm);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-sm);
+        vertical-align: middle;
+        position: sticky;
+        top: 0;
+        background: var(--color-background);
+        z-index: 10;
+    }
+
+    .tabla-horizontal th.col-cuenta {
+        min-width: 200px;
+        max-width: 300px;
+    }
+
+    .tabla-horizontal th.col-año {
+        min-width: 120px;
+        text-align: right;
+    }
+
+    .tabla-horizontal th.col-variacion {
+        min-width: 100px;
+        text-align: right;
+    }
+
+    .tabla-horizontal tbody tr {
+        border-bottom: 1px solid var(--color-border);
+        transition: background 0.2s ease;
+    }
+
+    .tabla-horizontal tbody tr:hover {
+        background: rgba(99, 102, 241, 0.02);
+    }
+
+    .tabla-horizontal td {
+        padding: var(--spacing-md) var(--spacing-sm);
+        vertical-align: middle;
+    }
+
+    .tabla-horizontal td.col-cuenta {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .tabla-horizontal td.col-año,
+    .tabla-horizontal td.col-variacion {
+        text-align: right;
+    }
+
+    /* Botón de gráfica */
+    .btn-graficar {
+        background: transparent;
+        border: none;
+        padding: 6px;
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .btn-graficar:hover {
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-graficar svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--color-primary);
+    }
+
+    /* Información de cuenta */
+    .cuenta-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .cuenta-codigo {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .cuenta-nombre {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-primary);
+    }
+
+    /* Valores monetarios */
+    .valor-monto {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+
+    /* Variaciones */
+    .valor-variacion {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-end;
+    }
+
+    .variacion-porcentual {
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-sm);
+        padding: 2px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+    }
+
+    .variacion-porcentual.positiva {
+        color: #10B981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+
+    .variacion-porcentual.negativa {
+        color: #EF4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .variacion-porcentual.neutral {
+        color: var(--color-text-secondary);
+        background: rgba(107, 114, 128, 0.1);
+    }
+
+    .variacion-absoluta {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+    }
+
+    /* Filas de categoría en análisis horizontal */
+    .tipo-header {
+        background: linear-gradient(135deg, #374151 0%, #1F2937 100%);
+        border: none !important;
+    }
+
+    .tipo-header:hover {
+        background: linear-gradient(135deg, #374151 0%, #1F2937 100%) !important;
+    }
+
+    .tipo-header td {
+        padding: var(--spacing-md) var(--spacing-sm) !important;
+    }
+
+    .tipo-titulo {
+        font-weight: var(--font-weight-bold);
+        color: white;
+        font-size: var(--font-size-base);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+
+    /* Modal de Gráfica */
+    .modal-grafica-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        padding: var(--spacing-lg);
+    }
+
+    .modal-grafica-overlay.active {
+        opacity: 1;
+    }
+
+    .modal-grafica-content {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-grafica-overlay.active .modal-grafica-content {
+        transform: scale(1);
+    }
+
+    .modal-grafica-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: var(--spacing-xl);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .modal-grafica-title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--spacing-xs) 0;
+    }
+
+    .modal-grafica-subtitle {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+    }
+
+    .modal-grafica-close {
+        background: transparent;
+        border: none;
+        padding: var(--spacing-sm);
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        margin-left: var(--spacing-lg);
+    }
+
+    .modal-grafica-close:hover {
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .modal-grafica-close svg {
+        stroke: var(--color-text-secondary);
+        transition: stroke 0.2s ease;
+    }
+
+    .modal-grafica-close:hover svg {
+        stroke: #EF4444;
+    }
+
+    .modal-grafica-body {
+        padding: var(--spacing-xl);
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    /* Gráfica Chart.js */
+    .grafica-chart-container {
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-lg);
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border);
+    }
+
+    .grafica-chart-container canvas {
+        max-height: 400px;
+    }
+
+    /* Tabla de Datos */
+    .grafica-datos-tabla {
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .tabla-datos-wrapper {
+        background: var(--color-background);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
+    }
+
+    .tabla-datos-titulo {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--spacing-md) 0;
+    }
+
+    .tabla-datos-grafica {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tabla-datos-grafica thead tr {
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    .tabla-datos-grafica th {
+        padding: var(--spacing-md);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .tabla-datos-grafica tbody tr {
+        border-bottom: 1px solid var(--color-border);
+        transition: background 0.2s ease;
+    }
+
+    .tabla-datos-grafica tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .tabla-datos-grafica tbody tr:hover {
+        background: rgba(99, 102, 241, 0.03);
+    }
+
+    .tabla-datos-grafica td {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    .tabla-datos-grafica .td-año {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+    }
+
+    .tabla-datos-grafica .td-monto {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+        text-align: right;
+    }
+
+    .tabla-datos-grafica .td-variacion {
+        text-align: right;
+    }
+
+    .variacion-valor {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-xs);
+    }
+
+    .variacion-valor.positiva {
+        color: #10B981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+
+    .variacion-valor.negativa {
+        color: #EF4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .variacion-valor.neutral {
+        color: #6B7280;
+        background: rgba(107, 114, 128, 0.1);
+    }
+
+    .sin-datos {
+        color: var(--color-text-secondary);
+        font-style: italic;
+    }
+
+    /* Estadísticas */
+    .grafica-stats {
+        margin-top: var(--spacing-xl);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .stat-card {
+        background: var(--color-background);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-md);
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: var(--spacing-sm);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .stat-value {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+    }
+
+    .stat-value.positiva {
+        color: #10B981;
+    }
+
+    .stat-value.negativa {
+        color: #EF4444;
     }
 
     /* Responsive */
@@ -477,6 +942,60 @@
             width: 100%;
             text-align: left;
         }
+
+        .tabla-horizontal {
+            font-size: var(--font-size-xs);
+        }
+
+        .tabla-horizontal th,
+        .tabla-horizontal td {
+            padding: var(--spacing-sm) 4px;
+        }
+
+        .modal-grafica-overlay {
+            padding: var(--spacing-sm);
+        }
+
+        .modal-grafica-content {
+            max-height: 95vh;
+        }
+
+        .modal-grafica-header {
+            padding: var(--spacing-lg);
+        }
+
+        .modal-grafica-body {
+            padding: var(--spacing-lg);
+        }
+
+        .grafica-chart-container {
+            padding: var(--spacing-md);
+        }
+
+        .grafica-chart-container canvas {
+            max-height: 300px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tabla-datos-wrapper {
+            padding: var(--spacing-md);
+        }
+
+        .tabla-datos-grafica th,
+        .tabla-datos-grafica td {
+            padding: var(--spacing-sm);
+            font-size: var(--font-size-xs);
+        }
+
+        .variacion-valor {
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+
+
     }
 </style>
 {% endblock %}
@@ -778,8 +1297,8 @@
                                 <h3 class="section-title">Análisis Horizontal - Balance General</h3>
                                 <p class="section-subtitle">Variaciones año tras año</p>
                                 
-                                <div class="tabla-container">
-                                    <p class="placeholder-text">El análisis horizontal se mostrará aquí una vez implementado</p>
+                                <div class="tabla-container" id="tabla-horizontal-balance">
+                                    <p class="placeholder-text">Seleccione empresa y años para generar el análisis horizontal</p>
                                 </div>
                             </div>
                         </div>
@@ -790,8 +1309,8 @@
                                 <h3 class="section-title">Análisis Horizontal - Estado de Resultados</h3>
                                 <p class="section-subtitle">Variaciones año tras año</p>
                                 
-                                <div class="tabla-container">
-                                    <p class="placeholder-text">El análisis horizontal se mostrará aquí una vez implementado</p>
+                                <div class="tabla-container" id="tabla-horizontal-resultados">
+                                    <p class="placeholder-text">Seleccione empresa y años para generar el análisis horizontal</p>
                                 </div>
                             </div>
                         </div>
@@ -811,10 +1330,10 @@
                         <div class="subtab-panel active" id="subtab-vertical-balance">
                             <div class="analisis-section">
                                 <h3 class="section-title">Análisis Vertical - Balance General</h3>
-                                <p class="section-subtitle">Estructura porcentual por año</p>
+                                <p class="section-subtitle">Porcentaje de cada cuenta sobre el total de su categoría</p>
                                 
-                                <div class="tabla-container">
-                                    <p class="placeholder-text">El análisis vertical se mostrará aquí una vez implementado</p>
+                                <div class="tabla-container" id="tabla-vertical-balance">
+                                    <p class="placeholder-text">Seleccione empresa y años para generar el análisis vertical</p>
                                 </div>
                             </div>
                         </div>
@@ -823,10 +1342,10 @@
                         <div class="subtab-panel" id="subtab-vertical-resultados">
                             <div class="analisis-section">
                                 <h3 class="section-title">Análisis Vertical - Estado de Resultados</h3>
-                                <p class="section-subtitle">Estructura porcentual por año</p>
+                                <p class="section-subtitle">Porcentaje sobre Ingresos/Ventas Totales por año</p>
                                 
-                                <div class="tabla-container">
-                                    <p class="placeholder-text">El análisis vertical se mostrará aquí una vez implementado</p>
+                                <div class="tabla-container" id="tabla-vertical-resultados">
+                                    <p class="placeholder-text">Seleccione empresa y años para generar el análisis vertical</p>
                                 </div>
                             </div>
                         </div>
@@ -851,6 +1370,9 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Chart.js para gráficas lineales -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formAnalisis');
@@ -919,6 +1441,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 mostrarAlerta(data.mensaje, 'success');
                 
+                // Guardar datos del análisis actual
+                datosAnalisisActual.empresaId = empresaId;
+                datosAnalisisActual.años = añosSeleccionados;
+                datosAnalisisActual.horizontalBalance = null;
+                datosAnalisisActual.horizontalResultados = null;
+                datosAnalisisActual.verticalBalance = null;
+                datosAnalisisActual.verticalResultados = null;
+                
+                // Renderizar los ratios calculados
+                renderizarRatios(data.ratios, data.años);
+                
                 // Mostrar sección de resultados y ocultar placeholder
                 document.getElementById('placeholderResultados').style.display = 'none';
                 document.getElementById('seccionResultados').style.display = 'block';
@@ -983,6 +1516,960 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     }
     
+    function renderizarRatios(ratios, años) {
+        const tbody = document.querySelector('#tab-ratios .tabla-ratios tbody');
+        const thead = document.querySelector('#tab-ratios .tabla-ratios thead tr');
+        
+        // Limpiar contenido existente
+        tbody.innerHTML = '';
+        
+        // Actualizar headers con los años
+        thead.innerHTML = '<th class="col-ratio">Ratio</th>';
+        años.forEach(año => {
+            thead.innerHTML += `<th class="col-year">${año}</th>`;
+        });
+        
+        // Si no hay ratios, mostrar mensaje
+        if (!ratios || ratios.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="${años.length + 1}" style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary);">
+                        No se pudieron calcular ratios financieros. Verifique que las cuentas estén correctamente mapeadas.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Agrupar ratios por categoría
+        const ratiosPorCategoria = {};
+        ratios.forEach(ratio => {
+            const categoria = ratio.categoria || 'Otros';
+            if (!ratiosPorCategoria[categoria]) {
+                ratiosPorCategoria[categoria] = [];
+            }
+            ratiosPorCategoria[categoria].push(ratio);
+        });
+        
+        // Renderizar cada categoría
+        Object.keys(ratiosPorCategoria).sort().forEach(categoria => {
+            // Fila de encabezado de categoría
+            const categoryRow = document.createElement('tr');
+            categoryRow.className = 'categoria-header';
+            categoryRow.innerHTML = `
+                <td colspan="${años.length + 1}" class="categoria-titulo">
+                    <div class="categoria-nombre">
+                
+                        ${categoria}
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(categoryRow);
+            
+            // Renderizar ratios de esta categoría
+            ratiosPorCategoria[categoria].forEach(ratio => {
+            const row = document.createElement('tr');
+            
+            // Columna de información del ratio
+            let parametroHtml = '';
+            if (ratio.parametro_sectorial !== null) {
+                parametroHtml += `<span class="parametro-sectorial">Parámetro sectorial: ${formatearNumero(ratio.parametro_sectorial)}</span>`;
+            }
+            if (ratio.promedio_sector !== null) {
+                parametroHtml += `<span class="parametro-promedio">Promedio sector: ${formatearNumero(ratio.promedio_sector)}</span>`;
+            }
+            if (ratio.promedio_general !== null) {
+                parametroHtml += `<span class="parametro-promedio">Promedio general: ${formatearNumero(ratio.promedio_general)}</span>`;
+            }
+            
+            row.innerHTML = `
+                <td class="ratio-info">
+                    <div class="ratio-nombre">${ratio.nombre}</div>
+                    <div class="ratio-parametros">
+                        ${parametroHtml}
+                    </div>
+                </td>
+            `;
+            
+            // Columnas de valores por año
+            años.forEach(año => {
+                const valorAño = ratio.valores_por_año[año];
+                
+                if (valorAño && valorAño.valor !== null) {
+                    const valor = valorAño.valor;
+                    
+                    // Interpretación vs parámetro sectorial
+                    let interpretacionParametro = '';
+                    if (ratio.parametro_sectorial !== null) {
+                        const superiorParam = valorAño.superior_parametro;
+                        interpretacionParametro = `
+                            <div class="interpretacion ${superiorParam ? 'superior' : 'inferior'}">
+                                <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${superiorParam ? 'M5 10l7-7m0 0l7 7m-7-7v18' : 'M19 14l-7 7m0 0l-7-7m7 7V3'}"/>
+                                </svg>
+                                <span>${superiorParam ? 'Superior' : 'Inferior'} al parámetro sectorial</span>
+                            </div>
+                        `;
+                    }
+                    
+                    // Interpretación vs promedio sector
+                    let interpretacionPromedioSector = '';
+                    if (ratio.promedio_sector !== null) {
+                        const superiorSector = valorAño.superior_promedio_sector;
+                        interpretacionPromedioSector = `
+                            <div class="interpretacion ${superiorSector ? 'superior' : 'inferior'}">
+                                <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${superiorSector ? 'M5 10l7-7m0 0l7 7m-7-7v18' : 'M19 14l-7 7m0 0l-7-7m7 7V3'}"/>
+                                </svg>
+                                <span>${superiorSector ? 'Superior' : 'Inferior'} al promedio del sector</span>
+                            </div>
+                        `;
+                    }
+                    
+                    // Interpretación vs promedio general
+                    let interpretacionPromedioGeneral = '';
+                    if (ratio.promedio_general !== null) {
+                        const superiorGeneral = valorAño.superior_promedio_general;
+                        interpretacionPromedioGeneral = `
+                            <div class="interpretacion ${superiorGeneral ? 'superior' : 'inferior'}">
+                                <svg class="icono-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${superiorGeneral ? 'M5 10l7-7m0 0l7 7m-7-7v18' : 'M19 14l-7 7m0 0l-7-7m7 7V3'}"/>
+                                </svg>
+                                <span>${superiorGeneral ? 'Superior' : 'Inferior'} al promedio general</span>
+                            </div>
+                        `;
+                    }
+                    
+                    row.innerHTML += `
+                        <td class="ratio-valor">
+                            <div class="valor-principal">${formatearNumero(valor)}</div>
+                            <div class="interpretaciones">
+                                ${interpretacionParametro}
+                                ${interpretacionPromedioSector}
+                                ${interpretacionPromedioGeneral}
+                            </div>
+                        </td>
+                    `;
+                } else {
+                    row.innerHTML += `
+                        <td class="ratio-valor">
+                            <div class="valor-principal" style="color: var(--color-text-secondary);">N/A</div>
+                            <div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--spacing-xs);">
+                                Datos insuficientes
+                            </div>
+                        </td>
+                    `;
+                }
+            });
+            
+            tbody.appendChild(row);
+            });
+        });
+    }
+    
+    function formatearNumero(numero) {
+        if (numero === null || numero === undefined) return 'N/A';
+        const num = parseFloat(numero);
+        return num.toFixed(4);
+    }
+    
+    function formatearMonto(monto) {
+        if (monto === null || monto === undefined) return 'N/A';
+        const num = parseFloat(monto);
+        return new Intl.NumberFormat('es-SV', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(num);
+    }
+    
+    function formatearPorcentaje(porcentaje) {
+        if (porcentaje === null || porcentaje === undefined) return 'N/A';
+        const num = parseFloat(porcentaje);
+        const signo = num >= 0 ? '+' : '';
+        return `${signo}${num.toFixed(2)}%`;
+    }
+    
+    // Función para cargar análisis horizontal
+    function cargarAnalisisHorizontal() {
+        // Verificar que haya al menos 2 años
+        if (datosAnalisisActual.años.length < 2) {
+            mostrarAlerta('Se necesitan al menos 2 años para el análisis horizontal.', 'warning');
+            return;
+        }
+        
+        // Cargar Balance General si no está cargado
+        if (!datosAnalisisActual.horizontalBalance) {
+            cargarAnalisisHorizontalBalance();
+        }
+        
+        // Cargar Estado de Resultados si no está cargado
+        if (!datosAnalisisActual.horizontalResultados) {
+            cargarAnalisisHorizontalResultados();
+        }
+    }
+    
+    function cargarAnalisisHorizontalBalance() {
+        const formData = new FormData();
+        formData.append('empresa_id', datosAnalisisActual.empresaId);
+        datosAnalisisActual.años.forEach(año => {
+            formData.append('años[]', año);
+        });
+        
+        fetch("{% url 'analisis:analisis_horizontal_balance' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                datosAnalisisActual.horizontalBalance = data;
+                renderizarAnalisisHorizontal(data, 'balance');
+            } else {
+                const container = document.getElementById('tabla-horizontal-balance');
+                container.innerHTML = `<p class="placeholder-text">${data.mensaje}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarAlerta('Error al cargar análisis horizontal del Balance General', 'error');
+        });
+    }
+    
+    function cargarAnalisisHorizontalResultados() {
+        const formData = new FormData();
+        formData.append('empresa_id', datosAnalisisActual.empresaId);
+        datosAnalisisActual.años.forEach(año => {
+            formData.append('años[]', año);
+        });
+        
+        fetch("{% url 'analisis:analisis_horizontal_resultados' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                datosAnalisisActual.horizontalResultados = data;
+                renderizarAnalisisHorizontal(data, 'resultados');
+            } else {
+                const container = document.getElementById('tabla-horizontal-resultados');
+                container.innerHTML = `<p class="placeholder-text">${data.mensaje}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarAlerta('Error al cargar análisis horizontal del Estado de Resultados', 'error');
+        });
+    }
+    
+    // Funciones de Análisis Vertical
+    function cargarAnalisisVertical() {
+        // Cargar Balance General si no está cargado
+        if (!datosAnalisisActual.verticalBalance) {
+            cargarAnalisisVerticalBalance();
+        }
+        
+        // Cargar Estado de Resultados si no está cargado
+        if (!datosAnalisisActual.verticalResultados) {
+            cargarAnalisisVerticalResultados();
+        }
+    }
+    
+    function cargarAnalisisVerticalBalance() {
+        const formData = new FormData();
+        formData.append('empresa_id', datosAnalisisActual.empresaId);
+        datosAnalisisActual.años.forEach(año => {
+            formData.append('años[]', año);
+        });
+        
+        fetch("{% url 'analisis:analisis_vertical_balance' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                datosAnalisisActual.verticalBalance = data;
+                renderizarAnalisisVertical(data, 'balance');
+            } else {
+                const container = document.getElementById('tabla-vertical-balance');
+                container.innerHTML = `<p class="placeholder-text">${data.mensaje}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarAlerta('Error al cargar análisis vertical del Balance General', 'error');
+        });
+    }
+    
+    function cargarAnalisisVerticalResultados() {
+        const formData = new FormData();
+        formData.append('empresa_id', datosAnalisisActual.empresaId);
+        datosAnalisisActual.años.forEach(año => {
+            formData.append('años[]', año);
+        });
+        
+        fetch("{% url 'analisis:analisis_vertical_resultados' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                datosAnalisisActual.verticalResultados = data;
+                renderizarAnalisisVertical(data, 'resultados');
+            } else {
+                const container = document.getElementById('tabla-vertical-resultados');
+                container.innerHTML = `<p class="placeholder-text">${data.mensaje}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarAlerta('Error al cargar análisis vertical del Estado de Resultados', 'error');
+        });
+    }
+    
+    function renderizarAnalisisVertical(data, tipo) {
+        const containerId = tipo === 'balance' ? 'tabla-vertical-balance' : 'tabla-vertical-resultados';
+        const container = document.getElementById(containerId);
+        
+        // Crear tabla
+        let html = '<table class="tabla-horizontal"><thead><tr>';
+        html += '<th class="col-cuenta">Cuenta</th>';
+        
+        // Columnas alternas: Monto y Porcentaje por cada año
+        data.años.forEach(año => {
+            html += `<th class="col-año">${año}</th>`;
+            // Para Balance General, usar "Análisis Vertical", para Estado de Resultados mantener la base
+            const tituloColumna = tipo === 'balance' ? 'Análisis Vertical' : `% ${data.base_calculo}`;
+            html += `<th class="col-año">${tituloColumna}</th>`;
+        });
+        
+        html += '</tr></thead><tbody>';
+        
+        // Renderizar cuentas por tipo
+        const tiposOrden = tipo === 'balance' 
+            ? ['ACTIVO', 'PASIVO', 'PATRIMONIO']
+            : ['INGRESO', 'GASTO', 'RESULTADO'];
+        
+        const tiposNombres = {
+            'ACTIVO': 'Activos',
+            'PASIVO': 'Pasivos',
+            'PATRIMONIO': 'Patrimonio',
+            'INGRESO': 'Ingresos',
+            'GASTO': 'Gastos',
+            'RESULTADO': 'Resultado'
+        };
+        
+        tiposOrden.forEach(tipoKey => {
+            const cuentas = data.cuentas_por_tipo[tipoKey];
+            if (!cuentas || cuentas.length === 0) return;
+            
+            // Fila de encabezado de tipo
+            const numColumnas = (data.años.length * 2) + 1;  // 2 columnas por año + columna de cuenta
+            html += `
+                <tr class="tipo-header">
+                    <td colspan="${numColumnas}">
+                        <div class="tipo-titulo">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            ${tiposNombres[tipoKey]}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Filas de cuentas
+            cuentas.forEach(cuenta => {
+                html += '<tr>';
+                
+                // Columna de cuenta
+                html += `
+                    <td class="col-cuenta">
+                        <div class="cuenta-info">
+                            <span class="cuenta-codigo">${cuenta.codigo}</span>
+                            <span class="cuenta-nombre">${cuenta.nombre}</span>
+                        </div>
+                    </td>
+                `;
+                
+                // Columnas alternas de monto y porcentaje por año
+                data.años.forEach(año => {
+                    const datos = cuenta.datos_por_año[año];
+                    
+                    if (datos) {
+                        // Columna de monto
+                        html += `<td class="col-año"><span class="valor-monto">${formatearMonto(datos.monto)}</span></td>`;
+                        
+                        // Columna de porcentaje (sin signo % para Balance, con % para Estado de Resultados)
+                        const valorPorcentaje = formatearPorcentaje(datos.porcentaje);
+                        const textoFinal = tipo === 'balance' ? valorPorcentaje : `${valorPorcentaje}`;
+                        html += `<td class="col-año"><span class="valor-monto">${textoFinal}</span></td>`;
+                    } else {
+                        html += `<td class="col-año"><span style="color: var(--color-text-secondary);">N/A</span></td>`;
+                        html += `<td class="col-año"><span style="color: var(--color-text-secondary);">N/A</span></td>`;
+                    }
+                });
+                
+                html += '</tr>';
+            });
+        });
+        
+        html += '</tbody></table>';
+        
+        // Agregar nota informativa sobre la base de cálculo
+        html += `
+            <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(99, 102, 241, 0.05); border-radius: var(--radius-sm); border-left: 4px solid var(--color-primary);">
+        `;
+        
+        // Mensaje diferente según el tipo de análisis
+        if (tipo === 'balance') {
+            html += `
+                <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                    <strong>Análisis Vertical:</strong> Cada cuenta se calcula sobre el total de su categoría:
+                </p>
+                <ul style="margin: var(--spacing-xs) 0 0 var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                    <li><strong>Activos:</strong> cuenta / Activo Total × 100</li>
+                    <li><strong>Pasivos:</strong> cuenta / Pasivo Total × 100</li>
+                    <li><strong>Patrimonio:</strong> cuenta / Patrimonio Total × 100</li>
+                </ul>
+            `;
+        } else if (tipo === 'resultados' && data.cuenta_base_usada) {
+            html += `
+                <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                    <strong>Base de cálculo:</strong> Los porcentajes se calculan sobre <strong>${data.base_calculo}</strong>
+                </p>
+                <p style="margin: var(--spacing-xs) 0 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                    <strong>Cuenta base:</strong> ${data.cuenta_base_usada.codigo} - ${data.cuenta_base_usada.nombre}
+                </p>
+            `;
+        }
+        
+        html += `</div>`;
+        
+        container.innerHTML = html;
+    }
+    
+    function renderizarAnalisisHorizontal(data, tipo) {
+        const containerId = tipo === 'balance' ? 'tabla-horizontal-balance' : 'tabla-horizontal-resultados';
+        const container = document.getElementById(containerId);
+        
+        // Crear tabla
+        let html = '<table class="tabla-horizontal"><thead><tr>';
+        html += '<th class="col-cuenta">Cuenta</th>';
+        
+        // Columnas de años
+        data.años.forEach(año => {
+            html += `<th class="col-año">${año}</th>`;
+        });
+        
+        // Columnas de variaciones
+        data.variaciones_info.forEach(varInfo => {
+            html += `<th class="col-variacion">Variación<br>${varInfo.label}</th>`;
+        });
+        
+        html += '</tr></thead><tbody>';
+        
+        // Renderizar cuentas por tipo
+        const tiposOrden = tipo === 'balance' 
+            ? ['ACTIVO', 'PASIVO', 'PATRIMONIO']
+            : ['INGRESO', 'GASTO', 'RESULTADO'];
+        
+        const tiposNombres = {
+            'ACTIVO': 'Activos',
+            'PASIVO': 'Pasivos',
+            'PATRIMONIO': 'Patrimonio',
+            'INGRESO': 'Ingresos',
+            'GASTO': 'Gastos',
+            'RESULTADO': 'Resultado'
+        };
+        
+        tiposOrden.forEach(tipoKey => {
+            const cuentas = data.cuentas_por_tipo[tipoKey];
+            if (!cuentas || cuentas.length === 0) return;
+            
+            // Fila de encabezado de tipo
+            const numColumnas = data.años.length + data.variaciones_info.length + 1;
+            html += `
+                <tr class="tipo-header">
+                    <td colspan="${numColumnas}">
+                        <div class="tipo-titulo">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            ${tiposNombres[tipoKey]}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Filas de cuentas
+            cuentas.forEach(cuenta => {
+                html += '<tr>';
+                
+                // Columna de cuenta con botón de gráfica
+                // Usar data-* attributes para evitar problemas con caracteres especiales
+                const cuentaDataJson = JSON.stringify({
+                    id: cuenta.id,
+                    codigo: cuenta.codigo,
+                    nombre: cuenta.nombre,
+                    montos: cuenta.montos_por_año
+                }).replace(/"/g, '&quot;');
+                
+                html += `
+                    <td class="col-cuenta">
+                        <button class="btn-graficar" data-cuenta="${cuentaDataJson}" title="Graficar evolución de esta cuenta">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </button>
+                        <div class="cuenta-info">
+                            <span class="cuenta-codigo">${cuenta.codigo}</span>
+                            <span class="cuenta-nombre">${cuenta.nombre}</span>
+                        </div>
+                    </td>
+                `;
+                
+                // Columnas de montos por año
+                data.años.forEach(año => {
+                    const monto = cuenta.montos_por_año[año];
+                    html += `<td class="col-año"><span class="valor-monto">${formatearMonto(monto)}</span></td>`;
+                });
+                
+                // Columnas de variaciones
+                data.variaciones_info.forEach(varInfo => {
+                    const variacion = cuenta.variaciones[varInfo.label];
+                    
+                    if (variacion && variacion.variacion_porcentual !== null) {
+                        const porcentaje = variacion.variacion_porcentual;
+                        const absoluta = variacion.variacion_absoluta;
+                        const clase = porcentaje > 0 ? 'positiva' : (porcentaje < 0 ? 'negativa' : 'neutral');
+                        
+                        html += `
+                            <td class="col-variacion">
+                                <div class="valor-variacion">
+                                    <span class="variacion-porcentual ${clase}">${formatearPorcentaje(porcentaje)}</span>
+                                    <span class="variacion-absoluta">${formatearMonto(absoluta)}</span>
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        html += `<td class="col-variacion"><span style="color: var(--color-text-secondary);">N/A</span></td>`;
+                    }
+                });
+                
+                html += '</tr>';
+            });
+        });
+        
+        html += '</tbody></table>';
+        
+        container.innerHTML = html;
+        
+        // Agregar event listeners a los botones de graficar
+        setTimeout(() => {
+            agregarEventListenersGrafica(containerId);
+        }, 100);
+    }
+    
+    function agregarEventListenersGrafica(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        const botones = container.querySelectorAll('.btn-graficar');
+        botones.forEach(boton => {
+            boton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                try {
+                    const cuentaData = JSON.parse(this.getAttribute('data-cuenta').replace(/&quot;/g, '"'));
+                    graficarCuenta(cuentaData);
+                } catch (error) {
+                    console.error('Error al procesar datos de cuenta:', error);
+                    mostrarAlerta('Error al procesar datos de la cuenta', 'error');
+                }
+            });
+        });
+    }
+    
+    function graficarCuenta(cuentaData) {
+        // Mostrar modal con gráfica
+        mostrarModalGrafica(cuentaData);
+    }
+    
+    function mostrarModalGrafica(cuentaData) {
+        // Obtener años y ordenarlos de menor a mayor
+        const años = [...datosAnalisisActual.años].sort((a, b) => a - b);
+        const montos = años.map(año => cuentaData.montos[año] || 0);
+        
+        // Verificar que haya datos
+        if (montos.every(m => m === 0 || m === null || m === undefined)) {
+            mostrarAlerta('No hay datos disponibles para graficar esta cuenta', 'warning');
+            return;
+        }
+        
+        // Crear modal HTML
+        const modalHtml = `
+            <div id="modalGrafica" class="modal-grafica-overlay">
+                <div class="modal-grafica-content">
+                    <div class="modal-grafica-header">
+                        <div>
+                            <h3 class="modal-grafica-title">Evolución Temporal</h3>
+                            <p class="modal-grafica-subtitle">${cuentaData.codigo} - ${cuentaData.nombre}</p>
+                        </div>
+                        <button class="modal-grafica-close" id="btnCerrarModalGrafica">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-grafica-body">
+                        <div class="grafica-chart-container">
+                            ${generarGraficaSimple(años, montos, cuentaData.nombre)}
+                        </div>
+                        <div class="grafica-datos-tabla">
+                            ${generarTablaDatos(años, montos)}
+                        </div>
+                        <div class="grafica-stats">
+                            ${generarEstadisticasCuenta(años, montos)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Agregar modal al DOM
+        const existingModal = document.getElementById('modalGrafica');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Animación de entrada
+        setTimeout(() => {
+            const modal = document.getElementById('modalGrafica');
+            if (modal) {
+                modal.classList.add('active');
+                
+                // Event listener para el botón de cerrar
+                const btnCerrar = document.getElementById('btnCerrarModalGrafica');
+                if (btnCerrar) {
+                    btnCerrar.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        cerrarModalGrafica();
+                    });
+                }
+                
+                // Cerrar al hacer clic fuera del contenido
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        cerrarModalGrafica();
+                    }
+                });
+                
+                // Cerrar con tecla ESC
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape') {
+                        cerrarModalGrafica();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                });
+            }
+        }, 10);
+    }
+    
+    function cerrarModalGrafica() {
+        const modal = document.getElementById('modalGrafica');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+    }
+    
+    function generarGraficaSimple(años, montos, nombreCuenta) {
+        // Generar un ID único para el canvas
+        const canvasId = 'chartCanvas_' + Date.now();
+        
+        // Crear contenedor con canvas
+        const html = `<canvas id="${canvasId}" style="max-height: 400px;"></canvas>`;
+        
+        // Crear la gráfica después de que el DOM esté listo
+        setTimeout(() => {
+            crearGraficaLineal(canvasId, años, montos, nombreCuenta);
+        }, 100);
+        
+        return html;
+    }
+    
+    function crearGraficaLineal(canvasId, años, montos, nombreCuenta) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+        
+        // Calcular variaciones para colores de fondo
+        const coloresFondo = [];
+        const coloresBorde = [];
+        
+        montos.forEach((monto, index) => {
+            if (index === 0) {
+                coloresFondo.push('rgba(107, 114, 128, 0.1)');
+                coloresBorde.push('rgb(107, 114, 128)');
+            } else {
+                const variacion = monto - montos[index - 1];
+                if (variacion > 0) {
+                    coloresFondo.push('rgba(16, 185, 129, 0.1)');
+                    coloresBorde.push('rgb(16, 185, 129)');
+                } else if (variacion < 0) {
+                    coloresFondo.push('rgba(239, 68, 68, 0.1)');
+                    coloresBorde.push('rgb(239, 68, 68)');
+                } else {
+                    coloresFondo.push('rgba(107, 114, 128, 0.1)');
+                    coloresBorde.push('rgb(107, 114, 128)');
+                }
+            }
+        });
+        
+        // Determinar color principal basado en tendencia general
+        const tendencia = montos[montos.length - 1] - montos[0];
+        const colorLinea = tendencia > 0 ? 'rgb(16, 185, 129)' : (tendencia < 0 ? 'rgb(239, 68, 68)' : 'rgb(107, 114, 128)');
+        const colorFondo = tendencia > 0 ? 'rgba(16, 185, 129, 0.1)' : (tendencia < 0 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(107, 114, 128, 0.1)');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: años,
+                datasets: [{
+                    label: 'Monto (USD)',
+                    data: montos,
+                    borderColor: colorLinea,
+                    backgroundColor: colorFondo,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4, // Curva suave
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: coloresBorde,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverBackgroundColor: coloresBorde,
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: `Evolución de ${nombreCuenta}`,
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('es-SV', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }).format(context.parsed.y);
+                                }
+                                
+                                // Agregar variación porcentual si no es el primer punto
+                                if (context.dataIndex > 0) {
+                                    const montoActual = context.parsed.y;
+                                    const montoAnterior = montos[context.dataIndex - 1];
+                                    if (montoAnterior !== 0) {
+                                        const variacion = ((montoActual - montoAnterior) / Math.abs(montoAnterior) * 100).toFixed(2);
+                                        const signo = variacion >= 0 ? '+' : '';
+                                        label += ` (${signo}${variacion}%)`;
+                                    }
+                                }
+                                
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('es-SV');
+                            },
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monto (USD)',
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Año',
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function generarTablaDatos(años, montos) {
+        let html = `
+            <div class="tabla-datos-wrapper">
+                <h4 class="tabla-datos-titulo">Datos Detallados</h4>
+                <table class="tabla-datos-grafica">
+                    <thead>
+                        <tr>
+                            <th>Año</th>
+                            <th>Monto</th>
+                            <th>Variación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        años.forEach((año, index) => {
+            const monto = montos[index] || 0;
+            let variacionHtml = '<span class="sin-datos">-</span>';
+            
+            if (index > 0 && montos[index - 1] !== 0) {
+                const variacion = ((monto - montos[index - 1]) / Math.abs(montos[index - 1]) * 100);
+                const clase = variacion > 0 ? 'positiva' : (variacion < 0 ? 'negativa' : 'neutral');
+                variacionHtml = `<span class="variacion-valor ${clase}">${formatearPorcentaje(variacion)}</span>`;
+            }
+            
+            html += `
+                <tr>
+                    <td class="td-año">${año}</td>
+                    <td class="td-monto">${formatearMonto(monto)}</td>
+                    <td class="td-variacion">${variacionHtml}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        return html;
+    }
+    
+    function generarEstadisticasCuenta(años, montos) {
+        // Calcular estadísticas
+        const montosValidos = montos.filter(m => m !== null && m !== undefined && !isNaN(m));
+        const promedio = montosValidos.reduce((a, b) => a + b, 0) / montosValidos.length;
+        const maximo = Math.max(...montosValidos);
+        const minimo = Math.min(...montosValidos);
+        const variacionTotal = montosValidos.length > 1 ? 
+            ((montosValidos[montosValidos.length - 1] - montosValidos[0]) / Math.abs(montosValidos[0]) * 100) : 0;
+        
+        return `
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Promedio</div>
+                    <div class="stat-value">${formatearMonto(promedio)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Máximo</div>
+                    <div class="stat-value">${formatearMonto(maximo)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Mínimo</div>
+                    <div class="stat-value">${formatearMonto(minimo)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Variación Total</div>
+                    <div class="stat-value ${variacionTotal > 0 ? 'positiva' : (variacionTotal < 0 ? 'negativa' : '')}">${formatearPorcentaje(variacionTotal)}</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Variables globales para almacenar datos del análisis
+    let datosAnalisisActual = {
+        empresaId: null,
+        años: [],
+        horizontalBalance: null,
+        horizontalResultados: null,
+        verticalBalance: null,
+        verticalResultados: null
+    };
+    
     // Manejo de pestañas principales
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanels = document.querySelectorAll('.tab-panel');
@@ -998,6 +2485,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Activar el botón y panel actual
             this.classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            // Cargar datos si es análisis horizontal y no se han cargado aún
+            if (tabId === 'horizontal' && datosAnalisisActual.empresaId && datosAnalisisActual.años.length >= 2) {
+                cargarAnalisisHorizontal();
+            }
+            
+            // Cargar datos si es análisis vertical y no se han cargado aún
+            if (tabId === 'vertical' && datosAnalisisActual.empresaId && datosAnalisisActual.años.length > 0) {
+                cargarAnalisisVertical();
+            }
         });
     });
     
@@ -1016,6 +2513,27 @@ document.addEventListener('DOMContentLoaded', function() {
             // Activar el botón y panel actual
             this.classList.add('active');
             document.getElementById(`subtab-${subtabId}`).classList.add('active');
+            
+            // Cargar datos si es necesario
+            if (datosAnalisisActual.empresaId) {
+                // Análisis horizontal requiere al menos 2 años
+                if (datosAnalisisActual.años.length >= 2) {
+                    if (subtabId === 'horizontal-balance' && !datosAnalisisActual.horizontalBalance) {
+                        cargarAnalisisHorizontalBalance();
+                    } else if (subtabId === 'horizontal-resultados' && !datosAnalisisActual.horizontalResultados) {
+                        cargarAnalisisHorizontalResultados();
+                    }
+                }
+                
+                // Análisis vertical requiere al menos 1 año
+                if (datosAnalisisActual.años.length > 0) {
+                    if (subtabId === 'vertical-balance' && !datosAnalisisActual.verticalBalance) {
+                        cargarAnalisisVerticalBalance();
+                    } else if (subtabId === 'vertical-resultados' && !datosAnalisisActual.verticalResultados) {
+                        cargarAnalisisVerticalResultados();
+                    }
+                }
+            }
         });
     });
 });
