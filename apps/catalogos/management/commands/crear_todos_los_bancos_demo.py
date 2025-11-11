@@ -21,7 +21,7 @@ class Command(BaseCommand):
         # Primero crear los ratios financieros (solo una vez para todos)
         self.stdout.write(
             self.style.WARNING(
-                f'\n[1/3] Creando ratios financieros predefinidos...'
+                f'\n[1/4] Creando ratios financieros predefinidos...'
             )
         )
         self.stdout.write(self.style.WARNING('-' * 80))
@@ -36,10 +36,28 @@ class Command(BaseCommand):
             )
             return
         
+        # Crear parámetros de referencia del sector bancario
+        self.stdout.write(
+            self.style.WARNING(
+                f'\n[2/4] Creando parámetros de referencia del sector bancario...'
+            )
+        )
+        self.stdout.write(self.style.WARNING('-' * 80))
+        
+        try:
+            call_command('crear_parametros_sector_bancario')
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(
+                    f'\n✗ Error ejecutando crear_parametros_sector_bancario: {str(e)}'
+                )
+            )
+            return
+        
         # Crear datos de Banco Agrícola
         self.stdout.write(
             self.style.WARNING(
-                f'\n[2/3] Creando datos completos de Banco Agrícola...'
+                f'\n[3/4] Creando datos completos de Banco Agrícola...'
             )
         )
         self.stdout.write(self.style.WARNING('-' * 80))
@@ -65,7 +83,7 @@ class Command(BaseCommand):
         # Crear datos de Banco Atlántida
         self.stdout.write(
             self.style.WARNING(
-                f'\n[3/3] Creando datos completos de Banco Atlántida...'
+                f'\n[4/4] Creando datos completos de Banco Atlántida...'
             )
         )
         self.stdout.write(self.style.WARNING('-' * 80))
@@ -100,16 +118,20 @@ class Command(BaseCommand):
                 '\n  • Catálogo con ~50 cuentas contables' +
                 '\n  • 3 Balances Generales (2022, 2023, 2024)' +
                 '\n  • 3 Estados de Resultados (2022, 2023, 2024)' +
-                '\n  • 13 Mapeos de ratios financieros' +
+                '\n  • Mapeos completos de todos los ratios financieros' +
                 '\n' +
                 '\n🏦 BANCO ATLÁNTIDA:' +
                 '\n  • Catálogo con ~50 cuentas contables' +
                 '\n  • 3 Balances Generales (2022, 2023, 2024)' +
                 '\n  • 3 Estados de Resultados (2022, 2023, 2024)' +
-                '\n  • 13 Mapeos de ratios financieros' +
+                '\n  • Mapeos completos de todos los ratios financieros' +
                 '\n' +
                 '\n📈 RATIOS FINANCIEROS (compartidos):' +
-                '\n  • 6 Ratios predefinidos (Liquidez, Endeudamiento, Rentabilidad)' +
+                '\n  • 10 Ratios predefinidos (Liquidez, Endeudamiento, Rentabilidad, Eficiencia)' +
+                '\n' +
+                '\n🎯 PARÁMETROS SECTORIALES:' +
+                '\n  • 10 Valores óptimos para el sector bancario' +
+                '\n  • Referencias para comparación y análisis' +
                 '\n' +
                 '\n🎉 ¡Sistema completo con 2 bancos listos para comparación!' +
                 '\n' + '='*80 + '\n'

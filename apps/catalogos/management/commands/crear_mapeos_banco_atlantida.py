@@ -60,30 +60,55 @@ class Command(BaseCommand):
                 # Definir los mapeos (misma estructura que Banco Agrícola)
                 # Formato: (nombre_ratio, nombre_componente, codigo_cuenta)
                 mapeos_definicion = [
-                    # RAZÓN CORRIENTE = Activo Corriente / Pasivo Corriente
+                    # === RATIOS DE LIQUIDEZ ===
+                    
+                    # 1. RAZÓN CORRIENTE = Activo Corriente / Pasivo Corriente
                     ('Razón Corriente', 'Activo Corriente', '1.1'),
                     ('Razón Corriente', 'Pasivo Corriente', '2.1'),
                     
-                    # PRUEBA ÁCIDA = (Activo Corriente - Inventario) / Pasivo Corriente
+                    # 2. PRUEBA ÁCIDA = (Activo Corriente - Inventarios) / Pasivo Corriente
                     ('Prueba Ácida', 'Activo Corriente', '1.1'),
-                    ('Prueba Ácida', 'Inventario', '1.1.04'),
+                    ('Prueba Ácida', 'Inventarios', '1.1.04'),
                     ('Prueba Ácida', 'Pasivo Corriente', '2.1'),
                     
-                    # RATIO DE ENDEUDAMIENTO = Pasivo Total / Patrimonio Total
-                    ('Ratio de Endeudamiento', 'Pasivo Total', '2.3'),
-                    ('Ratio de Endeudamiento', 'Patrimonio Total', '3.4'),
+                    # === RATIOS DE ENDEUDAMIENTO ===
                     
-                    # COBERTURA DE INTERESES = Utilidad Operativa / Gastos Financieros
-                    ('Cobertura de Intereses', 'Utilidad Operativa', '6.1'),
-                    ('Cobertura de Intereses', 'Gastos Financieros', '5.2'),
+                    # 3. RATIO DE ENDEUDAMIENTO TOTAL = Pasivo Total / Activo Total
+                    ('Ratio de Endeudamiento Total', 'Pasivo Total', '2.3'),
+                    ('Ratio de Endeudamiento Total', 'Activo Total', '1.3'),
                     
-                    # ROE = (Utilidad Neta / Patrimonio) × 100
-                    ('ROE', 'Utilidad Neta', '6.4'),
-                    ('ROE', 'Patrimonio', '3.4'),
+                    # 4. RATIO DE AUTONOMÍA FINANCIERA = Patrimonio Neto / Activo Total
+                    ('Ratio de Autonomía Financiera', 'Patrimonio Neto', '3.4'),
+                    ('Ratio de Autonomía Financiera', 'Activo Total', '1.3'),
                     
-                    # ROA = (Utilidad Neta / Activo Total) × 100
+                    # === RATIOS DE RENTABILIDAD ===
+                    
+                    # 5. ROA = Utilidad Neta / Activo Total Promedio
                     ('ROA', 'Utilidad Neta', '6.4'),
-                    ('ROA', 'Activo Total', '1.3'),
+                    ('ROA', 'Activo Total Promedio', '1.3'),
+                    
+                    # 6. ROE = Utilidad Neta / Patrimonio Neto Promedio
+                    ('ROE', 'Utilidad Neta', '6.4'),
+                    ('ROE', 'Patrimonio Neto Promedio', '3.4'),
+                    
+                    # 7. MARGEN NETO = Utilidad Neta / Ingresos Financieros Netos
+                    ('Margen Neto', 'Utilidad Neta', '6.4'),
+                    ('Margen Neto', 'Ingresos Financieros Netos', '4.3'),
+                    
+                    # 8. MARGEN DE INTERÉS NETO (NIM) = (Ingresos Financieros - Gastos Financieros) / Activos Productivos Promedio
+                    ('Margen de Interés Neto (NIM)', 'Ingresos Financieros', '4.1'),
+                    ('Margen de Interés Neto (NIM)', 'Gastos Financieros', '5.2'),
+                    ('Margen de Interés Neto (NIM)', 'Activos Productivos Promedio', '1.2.03'),  # Cartera de Créditos
+                    
+                    # 9. MARGEN OPERATIVO = Resultado Operativo / Ingresos de Operación
+                    ('Margen Operativo', 'Resultado Operativo', '6.1'),
+                    ('Margen Operativo', 'Ingresos de Operación', '4.1'),
+                    
+                    # === RATIOS DE EFICIENCIA ===
+                    
+                    # 10. RATIO DE EFICIENCIA = Gastos Operativos / Margen Bruto
+                    ('Ratio de Eficiencia', 'Gastos Operativos', '5.1'),
+                    ('Ratio de Eficiencia', 'Margen Bruto', '4.3'),  # Usando Total Ingresos como proxy
                 ]
                 
                 mapeos_creados = 0

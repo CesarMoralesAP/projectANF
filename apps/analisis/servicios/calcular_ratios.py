@@ -209,22 +209,42 @@ class CalculadoraRatios:
             except (InvalidOperation, ZeroDivisionError):
                 return None
         
-        elif len(valores_componentes) == 3 and ratio.nombre == "Prueba Ácida":
-            # Prueba Ácida: (Activo Corriente - Inventario) / Pasivo Corriente
-            # Componentes: [Activo Corriente, Inventario, Pasivo Corriente]
-            activo_corriente = valores_componentes[0]
-            inventario = valores_componentes[1]
-            pasivo_corriente = valores_componentes[2]
+        elif len(valores_componentes) == 3:
+            # Ratios con 3 componentes
             
-            if pasivo_corriente == 0:
-                return None
+            if ratio.nombre == "Prueba Ácida":
+                # Prueba Ácida: (Activo Corriente - Inventarios) / Pasivo Corriente
+                # Componentes: [Activo Corriente, Inventarios, Pasivo Corriente]
+                activo_corriente = valores_componentes[0]
+                inventarios = valores_componentes[1]
+                pasivo_corriente = valores_componentes[2]
+                
+                if pasivo_corriente == 0:
+                    return None
+                
+                try:
+                    numerador = activo_corriente - inventarios
+                    resultado = numerador / pasivo_corriente
+                    return round(resultado, 4)
+                except (InvalidOperation, ZeroDivisionError):
+                    return None
             
-            try:
-                numerador = activo_corriente - inventario
-                resultado = numerador / pasivo_corriente
-                return round(resultado, 4)
-            except (InvalidOperation, ZeroDivisionError):
-                return None
+            elif ratio.nombre == "Margen de Interés Neto (NIM)":
+                # NIM: (Ingresos Financieros - Gastos Financieros) / Activos Productivos Promedio
+                # Componentes: [Ingresos Financieros, Gastos Financieros, Activos Productivos Promedio]
+                ingresos_financieros = valores_componentes[0]
+                gastos_financieros = valores_componentes[1]
+                activos_productivos = valores_componentes[2]
+                
+                if activos_productivos == 0:
+                    return None
+                
+                try:
+                    numerador = ingresos_financieros - gastos_financieros
+                    resultado = (numerador / activos_productivos) * 100  # Expresado en porcentaje
+                    return round(resultado, 4)
+                except (InvalidOperation, ZeroDivisionError):
+                    return None
         
         # Para otros casos, retornar None
         return None

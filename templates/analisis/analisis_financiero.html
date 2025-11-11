@@ -1074,7 +1074,6 @@
                 <button class="tab-button active" data-tab="ratios">Ratios Financieros</button>
                 <button class="tab-button" data-tab="horizontal">Análisis Horizontal</button>
                 <button class="tab-button" data-tab="vertical">Análisis Vertical</button>
-                <button class="tab-button" data-tab="graficas">Gráficas</button>
             </div>
 
             <!-- Contenido de pestañas -->
@@ -1352,17 +1351,7 @@
                     </div>
                 </div>
 
-                <!-- Pestaña: Gráficas -->
-                <div class="tab-panel" id="tab-graficas">
-                    <div class="graficas-section">
-                        <h3 class="section-title">Gráficas y Visualizaciones</h3>
-                        <p class="section-subtitle">Representación visual de los datos financieros</p>
-                        
-                        <div class="graficas-container">
-                            <p class="placeholder-text">Las gráficas se mostrarán aquí una vez implementadas</p>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -1370,9 +1359,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Chart.js para gráficas lineales -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formAnalisis');

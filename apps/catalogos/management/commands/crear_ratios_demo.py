@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from apps.catalogos.models import RatioFinanciero, ComponenteRatio
 
 
@@ -9,6 +10,32 @@ class Command(BaseCommand):
     help = 'Crea ratios financieros de ejemplo con sus componentes'
 
     def handle(self, *args, **options):
+        # Lista de ratios que deben existir (los demás se eliminarán)
+        ratios_validos = [
+            'Razón Corriente',
+            'Prueba Ácida',
+            'Ratio de Endeudamiento Total',
+            'Ratio de Autonomía Financiera',
+            'ROA',
+            'ROE',
+            'Margen Neto',
+            'Margen de Interés Neto (NIM)',
+            'Margen Operativo',
+            'Ratio de Eficiencia',
+        ]
+        
+        # Eliminar ratios que no están en la lista válida
+        ratios_obsoletos = RatioFinanciero.objects.exclude(nombre__in=ratios_validos)
+        if ratios_obsoletos.exists():
+            count = ratios_obsoletos.count()
+            nombres_eliminados = list(ratios_obsoletos.values_list('nombre', flat=True))
+            ratios_obsoletos.delete()
+            self.stdout.write(
+                self.style.WARNING(
+                    f'\n⚠ {count} ratio(s) obsoleto(s) eliminado(s): {", ".join(nombres_eliminados)}\n'
+                )
+            )
+        
         # Ratios de Liquidez
         ratios_liquidez = [
             {
@@ -18,36 +45,60 @@ class Command(BaseCommand):
             },
             {
                 'nombre': 'Prueba Ácida',
-                'formula_display': '(Activo Corriente - Inventario) / Pasivo Corriente',
-                'componentes': ['Activo Corriente', 'Inventario', 'Pasivo Corriente']
+                'formula_display': '(Activo Corriente - Inventarios) / Pasivo Corriente',
+                'componentes': ['Activo Corriente', 'Inventarios', 'Pasivo Corriente']
             },
         ]
         
         # Ratios de Endeudamiento
         ratios_endeudamiento = [
             {
-                'nombre': 'Ratio de Endeudamiento',
-                'formula_display': 'Pasivo Total / Patrimonio Total',
-                'componentes': ['Pasivo Total', 'Patrimonio Total']
+                'nombre': 'Ratio de Endeudamiento Total',
+                'formula_display': 'Pasivo Total / Activo Total',
+                'componentes': ['Pasivo Total', 'Activo Total']
             },
             {
-                'nombre': 'Cobertura de Intereses',
-                'formula_display': 'Utilidad Operativa / Gastos Financieros',
-                'componentes': ['Utilidad Operativa', 'Gastos Financieros']
+                'nombre': 'Ratio de Autonomía Financiera',
+                'formula_display': 'Patrimonio Neto / Activo Total',
+                'componentes': ['Patrimonio Neto', 'Activo Total']
             },
         ]
         
         # Ratios de Rentabilidad
         ratios_rentabilidad = [
             {
-                'nombre': 'ROE',
-                'formula_display': '(Utilidad Neta / Patrimonio) × 100',
-                'componentes': ['Utilidad Neta', 'Patrimonio']
+                'nombre': 'ROA',
+                'formula_display': 'Utilidad Neta / Activo Total Promedio',
+                'componentes': ['Utilidad Neta', 'Activo Total Promedio']
             },
             {
-                'nombre': 'ROA',
-                'formula_display': '(Utilidad Neta / Activo Total) × 100',
-                'componentes': ['Utilidad Neta', 'Activo Total']
+                'nombre': 'ROE',
+                'formula_display': 'Utilidad Neta / Patrimonio Neto Promedio',
+                'componentes': ['Utilidad Neta', 'Patrimonio Neto Promedio']
+            },
+            {
+                'nombre': 'Margen Neto',
+                'formula_display': 'Utilidad Neta / Ingresos Financieros Netos',
+                'componentes': ['Utilidad Neta', 'Ingresos Financieros Netos']
+            },
+            {
+                'nombre': 'Margen de Interés Neto (NIM)',
+                'formula_display': '(Ingresos Financieros - Gastos Financieros) / Activos Productivos Promedio',
+                'componentes': ['Ingresos Financieros', 'Gastos Financieros', 'Activos Productivos Promedio']
+            },
+            {
+                'nombre': 'Margen Operativo',
+                'formula_display': 'Resultado Operativo / Ingresos de Operación',
+                'componentes': ['Resultado Operativo', 'Ingresos de Operación']
+            },
+        ]
+        
+        # Ratios de Eficiencia
+        ratios_eficiencia = [
+            {
+                'nombre': 'Ratio de Eficiencia',
+                'formula_display': 'Gastos Operativos / Margen Bruto',
+                'componentes': ['Gastos Operativos', 'Margen Bruto']
             },
         ]
         
@@ -56,6 +107,7 @@ class Command(BaseCommand):
             'Liquidez': ratios_liquidez,
             'Endeudamiento': ratios_endeudamiento,
             'Rentabilidad': ratios_rentabilidad,
+            'Eficiencia': ratios_eficiencia,
         }
         
         total_ratios = 0
@@ -87,6 +139,22 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.WARNING(f'  ⚠ Ratio ya existe: {ratio.nombre}')
                     )
+                    
+                    # Eliminar componentes obsoletos que ya no están en la definición actual
+                    componentes_actuales = ratio_data['componentes']
+                    componentes_obsoletos = ComponenteRatio.objects.filter(
+                        ratio_financiero=ratio
+                    ).exclude(nombre_componente__in=componentes_actuales)
+                    
+                    if componentes_obsoletos.exists():
+                        count_comp = componentes_obsoletos.count()
+                        nombres_comp = list(componentes_obsoletos.values_list('nombre_componente', flat=True))
+                        componentes_obsoletos.delete()
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f'    ⚠ Eliminados {count_comp} componente(s) obsoleto(s): {", ".join(nombres_comp)}'
+                            )
+                        )
                 
                 # Crear componentes del ratio
                 for orden, nombre_componente in enumerate(ratio_data['componentes'], start=1):

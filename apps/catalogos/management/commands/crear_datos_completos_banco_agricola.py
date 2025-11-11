@@ -18,8 +18,9 @@ class Command(BaseCommand):
             )
         )
         
+        # Nota: crear_ratios_demo se ejecuta en el comando maestro crear_todos_los_bancos_demo
+        # Si ejecutas este comando individualmente y no existen ratios, ejecútalo primero manualmente
         comandos = [
-            ('crear_ratios_demo', 'Creando ratios financieros predefinidos'),
             ('crear_catalogo_banco_agricola', 'Creando catálogo de cuentas de Banco Agrícola'),
             ('crear_estados_banco_agricola', 'Creando estados financieros de Banco Agrícola'),
             ('crear_mapeos_banco_agricola', 'Creando mapeos de ratios de Banco Agrícola'),
@@ -49,11 +50,13 @@ class Command(BaseCommand):
                 '\n✓ DATOS DE DEMOSTRACIÓN CREADOS EXITOSAMENTE' +
                 '\n' + '='*70 +
                 '\n\n📊 Resumen de datos creados:' +
-                '\n  • Ratios financieros predefinidos (6 ratios)' +
                 '\n  • Catálogo de cuentas de Banco Agrícola (~50 cuentas)' +
                 '\n  • 3 Balances Generales (2022, 2023, 2024)' +
                 '\n  • 3 Estados de Resultados (2022, 2023, 2024)' +
-                '\n  • Mapeos de ratios financieros (~18 mapeos)' +
+                '\n  • Mapeos completos de todos los ratios financieros' +
+                '\n' +
+                '\n💡 Nota: Si los ratios no existen, ejecuta primero:' +
+                '\n   python manage.py crear_ratios_demo' +
                 '\n\n🎉 ¡Todo listo para usar el sistema!' +
                 '\n' + '='*70 + '\n'
             )
