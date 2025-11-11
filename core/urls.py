@@ -18,7 +18,7 @@ urlpatterns = [
     path('parametros/', include('apps.parametros.urls')),
     path('estados/', include('apps.estados.urls')),
     path('analisis/', include('apps.analisis.urls')),
-    # path('proyecciones/', include('apps.proyecciones.urls')),
+    path('proyecciones/', include('apps.proyecciones.urls')),
     # path('graficas/', include('apps.graficas.urls')),
 ]
 

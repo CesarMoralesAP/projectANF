@@ -1,0 +1,510 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load proyecciones_extras %}
+
+{% block title %}Resultados de Proyección{% endblock %}
+
+{% block extra_css %}
+<style>
+    .resultados-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-xl);
+    }
+
+    .card-resultados {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        box-shadow: var(--shadow-md);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .header-resultados {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-xl);
+        padding-bottom: var(--spacing-lg);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    .header-info h1 {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .header-info .meta {
+        display: flex;
+        gap: var(--spacing-lg);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-sm);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+
+    .meta-item svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--color-primary);
+    }
+
+    .meta-item strong {
+        color: var(--color-text-primary);
+        margin-left: var(--spacing-xs);
+    }
+
+    .btn-volver {
+        padding: 12px 24px;
+        background: var(--color-background);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        text-decoration: none;
+    }
+
+    .btn-volver:hover {
+        background: var(--color-surface);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        transform: translateX(-4px);
+    }
+
+    .grafica-section {
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    .section-title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .grafica-container {
+        background: var(--color-background);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-xl);
+        border: 1px solid var(--color-border);
+    }
+
+    .grafica-container canvas {
+        max-height: 400px;
+    }
+
+    .ecuacion-box {
+        background: rgba(99, 102, 241, 0.1);
+        border-left: 4px solid var(--color-primary);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-sm);
+        margin-top: var(--spacing-lg);
+    }
+
+    .ecuacion-box .label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .ecuacion-box .formula {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-primary);
+        font-family: 'Courier New', monospace;
+    }
+
+    .tabla-section {
+        margin-top: var(--spacing-2xl);
+    }
+
+    .tabla-proyeccion {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--color-surface);
+    }
+
+    .tabla-proyeccion thead tr {
+        background: var(--color-background);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    .tabla-proyeccion th {
+        padding: var(--spacing-md) var(--spacing-lg);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-base);
+    }
+
+    .tabla-proyeccion th:last-child {
+        text-align: right;
+    }
+
+    .tabla-proyeccion tbody tr {
+        border-bottom: 1px solid var(--color-border);
+        transition: background 0.2s ease;
+    }
+
+    .tabla-proyeccion tbody tr:hover {
+        background: rgba(99, 102, 241, 0.02);
+    }
+
+    .tabla-proyeccion td {
+        padding: var(--spacing-md) var(--spacing-lg);
+        color: var(--color-text-primary);
+    }
+
+    .tabla-proyeccion td:last-child {
+        text-align: right;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-primary);
+    }
+
+    .tabla-proyeccion tbody tr:nth-child(even) {
+        background: rgba(0, 0, 0, 0.01);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #4F46E5 100%);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
+        color: white;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        opacity: 0.9;
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .alerta-exito {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid #10B981;
+        padding: var(--spacing-md);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--spacing-xl);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .alerta-exito svg {
+        width: 24px;
+        height: 24px;
+        stroke: #10B981;
+        flex-shrink: 0;
+    }
+
+    .alerta-exito .texto {
+        font-size: var(--font-size-base);
+        color: #065F46;
+    }
+
+    @media (max-width: 768px) {
+        .resultados-container {
+            padding: var(--spacing-lg);
+        }
+
+        .header-resultados {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-lg);
+        }
+
+        .header-info .meta {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grafica-container {
+            padding: var(--spacing-md);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="resultados-container">
+    <!-- Alerta de éxito -->
+    <div class="alerta-exito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="texto">
+            <strong>¡Proyección generada exitosamente!</strong> Los datos han sido guardados en la base de datos.
+        </div>
+    </div>
+
+    <!-- Card principal -->
+    <div class="card-resultados">
+        <!-- Header -->
+        <div class="header-resultados">
+            <div class="header-info">
+                <h1>Proyección de Ventas {{ anio }}</h1>
+                <div class="meta">
+                    <div class="meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        <span>Empresa: <strong>{{ empresa.nombre }}</strong></span>
+                    </div>
+                    <div class="meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        <span>Método: <strong>{{ metodo }}</strong></span>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'proyecciones:proyeccion_ventas' %}" class="btn-volver">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Volver
+            </a>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Datos Históricos</div>
+                <div class="stat-value">{{ meses_hist|length }} meses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Proyección Generada</div>
+                <div class="stat-value">12 meses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Año Proyectado</div>
+                <div class="stat-value">{{ anio }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Método Usado</div>
+                <div class="stat-value" style="font-size: var(--font-size-base);">{{ metodo }}</div>
+            </div>
+        </div>
+
+        <!-- Gráfica -->
+        <div class="grafica-section">
+            <h3 class="section-title">📈 Evolución y Proyección de Ventas</h3>
+            <div class="grafica-container">
+                <canvas id="graficaProyeccion"></canvas>
+            </div>
+
+            {% if ecuacion %}
+            <div class="ecuacion-box">
+                <div class="label">Ecuación de la Tendencia:</div>
+                <div class="formula">{{ ecuacion }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Tabla de proyección -->
+        <div class="tabla-section">
+            <h3 class="section-title">📊 Tabla de Proyección {{ anio }}</h3>
+            <table class="tabla-proyeccion">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Valor Proyectado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mes, valor in proyecciones_tabla %}
+                    <tr>
+                        <td>{{ mes }}</td>
+                        <td>${{ valor|formato_moneda }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" style="text-align: center; color: var(--color-text-secondary);">
+                            No hay proyecciones disponibles
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('graficaProyeccion');
+    const mesesHist = {{ meses_hist|safe }};
+    const valoresHist = {{ valores_hist|safe }};
+    const mesesProj = {{ meses_proj|safe }};
+    const valoresProj = {{ valores_proj|safe }};
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: mesesHist.concat(mesesProj),
+            datasets: [
+                {
+                    label: 'Datos Históricos',
+                    data: valoresHist,
+                    borderColor: '#6366F1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#6366F1',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                },
+                {
+                    label: 'Proyección ({{ metodo }})',
+                    data: new Array(valoresHist.length).fill(null).concat(valoresProj),
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    borderDash: [10, 5],
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#10B981',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 14,
+                            family: 'Inter, system-ui, sans-serif'
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Evolución de Ventas y Proyección',
+                    font: {
+                        size: 16,
+                        weight: '600',
+                        family: 'Inter, system-ui, sans-serif'
+                    },
+                    padding: {
+                        bottom: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#6366F1',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('es-SV', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString('es-SV');
+                        },
+                        font: {
+                            size: 12,
+                            family: 'Inter, system-ui, sans-serif'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12,
+                            family: 'Inter, system-ui, sans-serif'
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

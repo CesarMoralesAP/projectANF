@@ -95,7 +95,7 @@
                             </a>
                         </li>
                         <li class="sidebar-menu-item">
-                            <a href="#" class="sidebar-menu-link">
+                            <a href="{% url 'proyecciones:proyeccion_ventas' %}" class="sidebar-menu-link {% if request.resolver_match.app_name == 'proyecciones' %}active{% endif %}">
                                 <span class="sidebar-menu-icon">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>

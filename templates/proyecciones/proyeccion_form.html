@@ -1,0 +1,428 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Proyección de Ventas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .proyeccion-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: var(--spacing-xl);
+    }
+
+    .card-proyeccion {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-proyeccion {
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .header-proyeccion h1 {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .header-proyeccion p {
+        font-size: var(--font-size-base);
+        color: var(--color-text-secondary);
+        margin: 0;
+    }
+
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xl);
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .form-control {
+        padding: 12px 16px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-base);
+        color: var(--color-text-primary);
+        background: var(--color-surface);
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-hint {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-xs);
+    }
+
+    .metodos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-sm);
+    }
+
+    .metodo-option {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-md);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--color-surface);
+    }
+
+    .metodo-option:hover {
+        border-color: var(--color-primary);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .metodo-option input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        margin-right: var(--spacing-sm);
+        cursor: pointer;
+        accent-color: var(--color-primary);
+    }
+
+    .metodo-option label {
+        cursor: pointer;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-primary);
+        margin: 0;
+        user-select: none;
+    }
+
+    .metodo-option.selected {
+        border-color: var(--color-primary);
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .file-input-custom {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px dashed var(--color-border);
+        border-radius: var(--radius-sm);
+        background: var(--color-background);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .file-input-custom:hover {
+        border-color: var(--color-primary);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .file-input-custom .file-icon {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto var(--spacing-sm);
+        fill: var(--color-text-secondary);
+    }
+
+    .file-input-custom .file-text {
+        text-align: center;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+    }
+
+    .file-input-custom .file-text strong {
+        color: var(--color-primary);
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .file-selected {
+        display: none;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid #10B981;
+        border-radius: var(--radius-sm);
+        color: #065F46;
+        font-size: var(--font-size-sm);
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .file-selected.active {
+        display: flex;
+    }
+
+    .btn-generar {
+        width: 100%;
+        padding: 16px;
+        background: var(--color-text-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+    }
+
+    .btn-generar:hover {
+        background: #111827;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-generar:disabled {
+        background: var(--color-border);
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .info-box {
+        background: rgba(99, 102, 241, 0.05);
+        border-left: 4px solid var(--color-primary);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-sm);
+        margin-top: var(--spacing-xl);
+    }
+
+    .info-box-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-xs);
+        font-size: var(--font-size-sm);
+    }
+
+    .info-box-content {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .proyeccion-container {
+            padding: var(--spacing-lg);
+        }
+
+        .metodos-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="proyeccion-container">
+    <div class="card-proyeccion">
+        <!-- Header -->
+        <div class="header-proyeccion">
+            <h1>Proyección de Ventas</h1>
+            <p>Genere proyecciones de ventas basadas en datos históricos utilizando métodos estadísticos</p>
+        </div>
+
+        <!-- Formulario -->
+        <form method="POST" action="{% url 'proyecciones:generar_proyeccion' %}" enctype="multipart/form-data" id="formProyeccion">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <!-- Selección de empresa -->
+                <div class="form-group">
+                    <label for="selectEmpresa">Empresa</label>
+                    <select id="selectEmpresa" name="empresa" class="form-control" required>
+                        <option value="">Seleccione una empresa...</option>
+                        {% for empresa in empresas %}
+                            <option value="{{ empresa.id }}">{{ empresa.nombre }} - {{ empresa.sector.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Método de proyección -->
+                <div class="form-group">
+                    <label>Método de Proyección</label>
+                    <div class="metodos-grid">
+                        <div class="metodo-option" data-metodo="Incremento Absoluto">
+                            <input type="radio" name="metodo" value="Incremento Absoluto" id="metodo1" required>
+                            <label for="metodo1">Incremento Absoluto</label>
+                        </div>
+                        <div class="metodo-option" data-metodo="Incremento Porcentual">
+                            <input type="radio" name="metodo" value="Incremento Porcentual" id="metodo2" required>
+                            <label for="metodo2">Incremento Porcentual</label>
+                        </div>
+                        <div class="metodo-option" data-metodo="Minimos Cuadrados">
+                            <input type="radio" name="metodo" value="Minimos Cuadrados" id="metodo3" required>
+                            <label for="metodo3">Mínimos Cuadrados</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archivo Excel -->
+                <div class="form-group">
+                    <label>Archivo Excel con Datos Históricos</label>
+                    <div class="file-input-wrapper">
+                        <label for="fileInput" class="file-input-custom">
+                            <svg class="file-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+                            </svg>
+                            <div class="file-text">
+                                <strong>Click para seleccionar archivo</strong> o arrastre aquí<br>
+                                <small>Excel (.xlsx, .xls)</small>
+                            </div>
+                        </label>
+                        <input type="file" id="fileInput" name="archivo" accept=".xlsx,.xls" required>
+                    </div>
+                    <div class="file-selected" id="fileSelected">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span id="fileName"></span>
+                    </div>
+                    <p class="form-hint">El archivo debe contener 3 columnas: <strong>Año</strong>, <strong>Mes</strong> y <strong>Valor</strong></p>
+                </div>
+
+                <!-- Botón generar -->
+                <button type="submit" class="btn-generar" id="btnGenerar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Generar Proyección
+                </button>
+            </div>
+        </form>
+
+        <!-- Info box -->
+        <div class="info-box">
+            <div class="info-box-title">📊 Métodos de Proyección Disponibles:</div>
+            <div class="info-box-content">
+                <ul style="margin: var(--spacing-xs) 0 0 var(--spacing-lg); padding: 0;">
+                    <li><strong>Incremento Absoluto:</strong> Proyecta basándose en el incremento promedio absoluto.</li>
+                    <li><strong>Incremento Porcentual:</strong> Proyecta basándose en el incremento porcentual promedio.</li>
+                    <li><strong>Mínimos Cuadrados:</strong> Ajusta una recta de tendencia lineal a los datos históricos.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejo de selección visual de métodos
+    const metodoOptions = document.querySelectorAll('.metodo-option');
+    const radioInputs = document.querySelectorAll('input[name="metodo"]');
+    
+    metodoOptions.forEach((option, index) => {
+        option.addEventListener('click', function(e) {
+            if (e.target.type !== 'radio') {
+                radioInputs[index].checked = true;
+                updateMetodoSelection();
+            }
+        });
+    });
+    
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', updateMetodoSelection);
+    });
+    
+    function updateMetodoSelection() {
+        metodoOptions.forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio.checked) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+    
+    // Manejo de archivo
+    const fileInput = document.getElementById('fileInput');
+    const fileSelected = document.getElementById('fileSelected');
+    const fileName = document.getElementById('fileName');
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            fileName.textContent = this.files[0].name;
+            fileSelected.classList.add('active');
+        } else {
+            fileSelected.classList.remove('active');
+        }
+    });
+    
+    // Drag and drop
+    const fileInputCustom = document.querySelector('.file-input-custom');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileInputCustom.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileInputCustom.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileInputCustom.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        fileInputCustom.style.borderColor = 'var(--color-primary)';
+        fileInputCustom.style.background = 'rgba(99, 102, 241, 0.1)';
+    }
+    
+    function unhighlight() {
+        fileInputCustom.style.borderColor = 'var(--color-border)';
+        fileInputCustom.style.background = 'var(--color-background)';
+    }
+    
+    fileInputCustom.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        
+        if (files && files[0]) {
+            fileName.textContent = files[0].name;
+            fileSelected.classList.add('active');
+        }
+    }
+});
+</script>
+{% endblock %}
